@@ -1,0 +1,105 @@
+/* Favicon */
+link[rel='icon'] {
+    content: url('/favicon.ico');
+}
+
+/* Remove topbar */
+.topbar {
+    display: none !important;
+}
+
+/* Remove blocos de schemas/models */
+.models,
+.models-title {
+    display: none !important;
+}
+
+/* Ajustes de layout */
+.swagger-ui {
+    background-color: #ffffff;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    padding: 40px;
+    color: #2c3e50;
+}
+
+/* Informações principais da API */
+/* Centraliza o título e sobe a posição */
+.swagger-ui .info {
+    text-align: center;
+    margin-top: 0 !important;
+    padding-top: 0px;
+}
+
+.swagger-ui .info h1 {
+    font-size: 32px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    margin-top: 0;
+}
+
+/* Títulos */
+.swagger-ui .info h2,
+.swagger-ui .info h3,
+.swagger-ui .opblock-tag {
+    color: #34495e;
+    font-weight: 600;
+}
+
+/* Estilo dos métodos (GET, POST, etc) */
+.opblock {
+    border: none;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+    border-radius: 6px;
+}
+
+.opblock-summary {
+    border-radius: 6px;
+    padding: 15px;
+}
+
+.opblock.opblock-get .opblock-summary {
+    background-color: #ecf8f4;
+    border-left: 5px solid #2ecc71;
+}
+
+.opblock.opblock-post .opblock-summary {
+    background-color: #f0f6ff;
+    border-left: 5px solid #3498db;
+}
+
+.opblock.opblock-put .opblock-summary {
+    background-color: #fef9e7;
+    border-left: 5px solid #f1c40f;
+}
+
+.opblock.opblock-delete .opblock-summary {
+    background-color: #fdecea;
+    border-left: 5px solid #e74c3c;
+}
+
+/* Caixa de respostas */
+.response-col_description__inner {
+    background: #f9f9f9;
+    border-radius: 6px;
+    padding: 10px;
+}
+
+/* Ajustes nos inputs */
+.parameter__name,
+.parameter__in,
+.parameter__type {
+    font-weight: 500;
+}
+
+.parameters-container {
+    background: #fafafa;
+    border-radius: 4px;
+    padding: 10px;
+    margin-top: 10px;
+}
+
+/* Tira rodapé, se existir */
+footer {
+    display: none !important;
+}

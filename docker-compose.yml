@@ -1,0 +1,18 @@
+services:
+  db:
+    container_name: db_mysql_app
+    image: mysql:8.0.35
+    restart: on-failure:5
+    env_file:
+      - .env
+    environment:
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}      
+    ports:
+      - "${DB_PORT}:3306"
+    command: --default-authentication-plugin=mysql_native_password
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:

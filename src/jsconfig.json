@@ -1,0 +1,40 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "@services/*": [
+                "services/*"
+            ],
+            "@controllers/*": [
+                "controllers/*"
+            ],
+            "@models/*": [
+                "models/*"
+            ],
+            "@routes/*": [
+                "routes/*"
+            ],
+            "@helpers/*": [
+                "helpers/*"
+            ],
+            "@middleware/*": [
+                "middleware/*"
+            ],
+            "@database/*": [
+                "database/*"
+            ],
+            "@dtos/*": [
+                "dtos/*"
+            ],
+            "@scripts/*": [
+                "scripts/*"
+            ],
+            "@utils/*": [
+                "utils/*"
+            ]
+        }
+    },
+    "include": [
+        "./"
+    ]
+}

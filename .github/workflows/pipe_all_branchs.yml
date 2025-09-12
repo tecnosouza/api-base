@@ -1,0 +1,254 @@
+name: CI Build and deployment
+
+on:
+  pull_request:
+    branches:
+      - '**'
+
+  push:
+    branches:
+      - production
+      - staging
+
+jobs:
+  backend:
+    name: Backend
+    if: github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref != 'refs/heads/production' && github.ref != 'refs/heads/staging')
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17.5
+        ports:
+          - 5432:5432
+        env:
+          DB_NAME: development
+          DB_USER: postgres
+          DB_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      NODE_ENV: development
+      PORT: 3000
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      JWT_EXPIRES_IN: 1h
+      DB_HOST: localhost
+      DB_PORT: 5432
+      DB_NAME: uge-student-base
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Cache Yarn dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/yarn
+            **/node_modules
+          key: ${{ runner.os }}-yarn-backend-${{ hashFiles('backend/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-backend-
+
+      - name: Install dependencies and CLI
+        run: |
+          yarn install
+          yarn global add sequelize-cli
+
+      - name: Run backend ESLint
+        working-directory: .
+        run: yarn be:lint
+
+    #   - name: Run backend testes automatizados
+    #     working-directory: .
+    #     run: yarn be:test
+
+      - name: Create database
+        run: yarn sequelize db:create
+
+      - name: Run migrations
+        run: yarn sequelize db:migrate
+
+      - name: Run seeds
+        run: yarn sequelize db:seed:all
+
+  frontend:
+    name: Frontend
+    if: github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref != 'refs/heads/production' && github.ref != 'refs/heads/staging' && github.ref != 'refs/heads/site')
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Cache Yarn dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/yarn
+            **/node_modules
+          key: ${{ runner.os }}-yarn-frontend-${{ hashFiles('frontend/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-frontend-
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Run frontend ESLint
+        working-directory: .
+        run: yarn fe:lint
+
+      - name: Build frontend
+        run: yarn build
+
+  deploy-backend:
+    name: Deploy Backend
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/production' || github.ref == 'refs/heads/staging')
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 📥 Checkout repository
+      uses: actions/checkout@v4
+
+    - name: 🧱 Preparar arquivos temporários do backend
+      run: |
+        mkdir -p deploy-backend-tmp
+        cd backend
+        rsync -av --progress --exclude-from='.rsync-exclude' ./ ../deploy-backend-tmp/
+
+    - name: 🚀 Enviar arquivos para o servidor (Saveincloud)
+      uses: appleboy/scp-action@v0.1.7
+      with:
+        host: ${{ secrets.SAVEINCLOUD_HOST }}
+        username: ${{ secrets.SAVEINCLOUD_USERNAME }}
+        port: ${{ secrets.SAVEINCLOUD_PORT }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        passphrase: ${{ secrets.SSH_PRIVATE_KEY_PASSPHRASE }}
+        source: "deploy-backend-tmp/"
+        target: "/home/jelastic/uge-backend"
+
+    - name: ⚙️ Instalar dependências no servidor e realizar o deploy
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.SAVEINCLOUD_HOST }}
+        username: ${{ secrets.SAVEINCLOUD_USERNAME }}
+        port: ${{ secrets.SAVEINCLOUD_PORT }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        passphrase: ${{ secrets.SSH_PRIVATE_KEY_PASSPHRASE }}
+        script: |
+          set -euo pipefail
+          cd /home/jelastic/uge-backend/deploy-backend-tmp
+          yarn
+          rsync -av --remove-source-files /home/jelastic/uge-backend/deploy-backend-tmp/ /home/jelastic/uge-backend/
+          rm -rf /home/jelastic/uge-backend/deploy-backend-tmp/
+
+    - name: 🧬 Executar migrações no banco de dados
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.SAVEINCLOUD_HOST }}
+        username: ${{ secrets.SAVEINCLOUD_USERNAME }}
+        port: ${{ secrets.SAVEINCLOUD_PORT }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        passphrase: ${{ secrets.SSH_PRIVATE_KEY_PASSPHRASE }}
+        script: |
+          set -euo pipefail
+          cd /home/jelastic/uge-backend
+          yarn add -D sequelize-cli
+          yarn migrate
+
+    - name: 🔁 Reiniciar aplicação com PM2
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.SAVEINCLOUD_HOST }}
+        username: ${{ secrets.SAVEINCLOUD_USERNAME }}
+        port: ${{ secrets.SAVEINCLOUD_PORT }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        passphrase: ${{ secrets.SSH_PRIVATE_KEY_PASSPHRASE }}
+        script: |
+          set -euo pipefail
+          pm2 restart uge-backend || pm2 start /home/jelastic/ecosystem.config.json --only uge-backend
+
+  deploy-frontend:
+    name: Deploy Frontend
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/production' || github.ref == 'refs/heads/staging')
+    needs: deploy-backend
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: 🧱 Preparar arquivos temporários do frontend
+        run: |
+          mkdir -p build-project
+          cd frontend && rsync -avz --exclude-from='.rsync-exclude' . ../build-project/
+
+      - name: 🚀 Enviar arquivos para o servidor (Saveincloud)
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SAVEINCLOUD_HOST }}
+          username: ${{ secrets.SAVEINCLOUD_USERNAME }}
+          port: ${{ secrets.SAVEINCLOUD_PORT }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          passphrase: ${{ secrets.SSH_PRIVATE_KEY_PASSPHRASE }}
+          source: "build-project/"
+          target: "/home/jelastic/uge-frontend"
+
+      - name: ⚙️ Instalar dependências e realizar o build
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SAVEINCLOUD_HOST }}
+          username: ${{ secrets.SAVEINCLOUD_USERNAME }}
+          port: ${{ secrets.SAVEINCLOUD_PORT }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          passphrase: ${{ secrets.SSH_PRIVATE_KEY_PASSPHRASE }}
+          script: |
+            cd /home/jelastic/uge-frontend/build-project
+            rm -rf node_modules yarn.lock
+            yarn cache clean
+            yarn install
+            yarn add -D vite @vitejs/plugin-react-swc typescript postcss autoprefixer
+            yarn build
+            cd /home/jelastic/uge-frontend
+            rsync -av --remove-source-files build-project/dist/ .
+            rm -rf build-project
+
+      - name: 🔁 Reiniciar aplicação com PM2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SAVEINCLOUD_HOST }}
+          username: ${{ secrets.SAVEINCLOUD_USERNAME }}
+          port: ${{ secrets.SAVEINCLOUD_PORT }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          passphrase: ${{ secrets.SSH_PRIVATE_KEY_PASSPHRASE }}
+          script: |
+            set -euo pipefail
+            pm2 describe uge-frontend > /dev/null \ && pm2 restart uge-frontend \ || pm2 start /home/jelastic/ecosystem.config.json --only uge-frontend --env production
