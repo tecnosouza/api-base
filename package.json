@@ -1,51 +1,22 @@
 {
-    "name": "sgt-api",
+    "name": "api",
     "version": "1.0.0",
     "main": "index.js",
     "license": "MIT",
     "scripts": {
-        "dev": "nodemon src/server.js",
-        "test": "cross-env NODE_ENV=test jest --detectOpenHandles --coverage --coverageDirectory=coverage",
-        "lint": "eslint -c src/eslint.config.mjs . --fix --ext .js,.jsx,.ts,.tsx",
-        "migrate": "yarn sequelize db:migrate",
-        "seed": "yarn sequelize-cli db:seed:all"
-    },
-    "_moduleAliases": {
-        "@root": "./src",
-        "@database": "./src/database",
-        "@controllers": "./src/controllers",
-        "@dtos": "./src/dtos",
-        "@helpers": "./src/helpers",
-        "@middleware": "./src/middleware",
-        "@models": "./src/models",
-        "@routes": "./src/routes",
-        "@scripts": "./src/scripts",
-        "@services": "./src/services",
-        "@utils": "./src/utils"
-    },
-    "dependencies": {
-        "bcryptjs": "^3.0.2",
-        "cors": "^2.8.5",
-        "dotenv": "^17.2.1",
-        "express": "^5.1.0",
-        "express-validator": "^7.2.1",
-        "jsonwebtoken": "^9.0.2",
-        "module-alias": "^2.2.3",
-        "mysql2": "^3.14.4",
-        "nodemailer": "^7.0.6",
-        "sequelize": "^6.37.7",
-        "swagger-jsdoc": "^6.2.8",
-        "swagger-ui-express": "^5.0.1",
-        "uuid": "^11.1.0"
+        "gl:install": "rm -fr node_modules && rm -fr frontend/node_modules && rm -fr backend/node_modules && yarn && yarn --cwd frontend && yarn --cwd backend && yarn global add sequelize-cli",
+        "be": "yarn --cwd backend && yarn --cwd backend dev",
+        "be:initbasepg": "docker-compose -f docker-compose-pg.yml down -v && docker-compose -f docker-compose-pg.yml up -d && sleep 3 && rm -fr backend/node_modules && yarn --cwd backend && node backend/scripts/initbase-setup.js && sleep 3 && yarn --cwd backend dev",
+        "be:initbasemysql": "docker-compose -f docker-compose-mysql.yml down -v && docker-compose -f docker-compose-mysql.yml up -d && sleep 3 && rm -fr backend/node_modules && yarn --cwd backend && node backend/scripts/initbase-setup.js && sleep 3 && yarn --cwd backend dev",
+        "be:lint": "yarn --cwd backend lint",
+        "be:migrate": "yarn --cwd backend migrate",
+        "be:seeds": "yarn --cwd backend seed",
+        "be:test": "yarn --cwd backend test",
+        "fe": "yarn --cwd frontend && yarn --cwd frontend dev",
+        "fe:lint": "yarn --cwd frontend lint",
+        "fe:build": "yarn --cwd frontend build"
     },
     "devDependencies": {
-        "@eslint/js": "^9.31.0",
-        "cross-env": "^7.0.3",
-        "eslint": "^9.31.0",
-        "globals": "^16.3.0",
-        "husky": "^9.1.7",
-        "jest": "^30.0.4",
-        "nodemon": "^3.1.4",
-        "sequelize-cli": "^6.6.3"
+        "husky": "^9.1.7"
     }
 }

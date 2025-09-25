@@ -5,7 +5,7 @@ const express = require('express');
 const { sequelize } = require('@models/index.js');
 const v1Routes = require('@routes/v1');
 const swaggerUi = require('swagger-ui-express');
-const getSwaggerSpec = require('../src/swaggerConfig');
+const getSwaggerSpec = require('./swaggerConfig');
 const errorHandler = require('@middleware/errorHandler');
 
 const app = express();
