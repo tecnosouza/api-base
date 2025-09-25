@@ -1,5 +1,7 @@
 /* eslint-disable no-unused-vars */
-require('dotenv').config();
+const loadEnv = require('../config/env');
+loadEnv();
+
 const EmailService = require('../services/EmailService');
 const { errorResponse } = require('../utils/responseUtils');
 const logError = require('../utils/ErrorLogs');

@@ -1,4 +1,6 @@
-require('dotenv').config();
+const loadEnv = require('../config/env');
+loadEnv();
+
 const nodemailer = require('nodemailer');
 
 class EmailService {

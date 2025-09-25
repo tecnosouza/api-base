@@ -1,4 +1,6 @@
-require('dotenv').config();
+const loadEnv = require('./config/env');
+loadEnv();
+
 require('module-alias/register');
 const cors = require('cors');
 const express = require('express');

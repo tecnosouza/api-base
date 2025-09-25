@@ -1,22 +1,3 @@
-const path = require('path');
-const fs = require('fs');
-const dotenv = require('dotenv');
-
-// __dirname = 'D:/development/tecnosouza/api-base/backend'
-// Queremos 'D:/development/tecnosouza/api-base'
-const projectRoot = path.resolve(__dirname, '../../../../'); // sobe um nível do backend
-
-// Caminho para o .env na raiz do projeto
-const envPath = path.join(projectRoot, '.env');
-
-if (fs.existsSync(envPath)) {
-    dotenv.config({ path: envPath });
-    console.log(`✅ Carregado .env da raiz do projeto: ${envPath}`);
-} else {
-    console.warn(`⚠️ .env não encontrado na raiz do projeto: ${envPath}`);
-    dotenv.config(); // fallback para variáveis do sistema
-}
-
 module.exports = {
     development: {
         dialect: process.env.DB_DIALECT,
