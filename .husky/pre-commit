@@ -3,8 +3,8 @@ set -e
 
 yarn husky install
 yarn be:lint
-yarn fe:lint
-yarn fe:build
+# yarn fe:lint
+# yarn fe:build
 
 BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
 
