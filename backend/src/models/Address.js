@@ -1,61 +1,80 @@
 /* eslint-disable no-unused-vars */
-const bcrypt = require('bcryptjs');
 const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-    class Person extends Model {
+    class Address extends Model {
         static associate(models) {
+            Address.belongsTo(models.Person, { foreignKey: 'person_id', as: 'person' });
+            Address.belongsTo(models.Warehouse, { foreignKey: 'warehouse_id', as: 'warehouse' });
         }
     }
-    Person.init({
+    Address.init({
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
             autoIncrement: true,
-            allowNull: false
+            allowNull: false,
         },
-        name: {
+        person_id: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+        },
+        warehouse_id: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+        },
+        default: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
+            allowNull: true,
+        },
+        zipcode: {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        last_name: {
+        street: {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        date_of_birth: {
-            type: DataTypes.DATE,
+        number: {
+            type: DataTypes.INTEGER,
             allowNull: false,
         },
-        rg: {
+        complement: {
             type: DataTypes.STRING,
             allowNull: true,
-            unique: true,
         },
-        cpf: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            unique: true,
-        },
-        username: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            unique: true,
-        },
-        password: {
+        neighborhood: {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        admin: {
+        city: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        state: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        latitude: {
+            type: DataTypes.DOUBLE,
+            allowNull: false,
+        },
+        longitude: {
+            type: DataTypes.DOUBLE,
+            allowNull: false,
+        },
+        is_active: {
             type: DataTypes.BOOLEAN,
             defaultValue: false,
         },
         created_at: {
-            allowNull: false,
             type: DataTypes.DATE,
+            allowNull: false,
             defaultValue: DataTypes.NOW,
         },
         updated_at: {
-            allowNull: false,
             type: DataTypes.DATE,
+            allowNull: false,
             defaultValue: DataTypes.NOW,
         },
         deleted_at: {
@@ -64,22 +83,13 @@ module.exports = (sequelize, DataTypes) => {
         },
     }, {
         sequelize,
-        modelName: 'Person',
-        tableName: 'persons',
+        modelName: 'Address',
+        tableName: 'addresses',
         paranoid: true,
         timestamps: true,
         createdAt: 'created_at',
         updatedAt: 'updated_at',
         deletedAt: 'deleted_at',
     });
-
-    Person.beforeCreate(async (user) => {
-        user.password = await bcrypt.hash(user.password, 10);
-    });
-
-    Person.prototype.comparePassword = function (candidatePassword) {
-        return bcrypt.compare(candidatePassword, this.password);
-    };
-
-    return Person;
+    return Address;
 };

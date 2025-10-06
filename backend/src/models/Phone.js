@@ -1,61 +1,47 @@
 /* eslint-disable no-unused-vars */
-const bcrypt = require('bcryptjs');
 const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-    class Person extends Model {
+    class Phone extends Model {
         static associate(models) {
+            Phone.belongsTo(models.Person, { foreignKey: 'person_id', as: 'person' });
         }
     }
-    Person.init({
+    Phone.init({
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
             autoIncrement: true,
-            allowNull: false
+            allowNull: false,
         },
-        name: {
+        person_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        },
+        ddi: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        },
+        ddd: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        },
+        number: {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        last_name: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        date_of_birth: {
-            type: DataTypes.DATE,
-            allowNull: false,
-        },
-        rg: {
-            type: DataTypes.STRING,
-            allowNull: true,
-            unique: true,
-        },
-        cpf: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            unique: true,
-        },
-        username: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            unique: true,
-        },
-        password: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        admin: {
+        default: {
             type: DataTypes.BOOLEAN,
             defaultValue: false,
+            allowNull: true,
         },
         created_at: {
-            allowNull: false,
             type: DataTypes.DATE,
+            allowNull: false,
             defaultValue: DataTypes.NOW,
         },
         updated_at: {
-            allowNull: false,
             type: DataTypes.DATE,
+            allowNull: false,
             defaultValue: DataTypes.NOW,
         },
         deleted_at: {
@@ -64,22 +50,13 @@ module.exports = (sequelize, DataTypes) => {
         },
     }, {
         sequelize,
-        modelName: 'Person',
-        tableName: 'persons',
+        modelName: 'Phone',
+        tableName: 'phones',
         paranoid: true,
         timestamps: true,
         createdAt: 'created_at',
         updatedAt: 'updated_at',
         deletedAt: 'deleted_at',
     });
-
-    Person.beforeCreate(async (user) => {
-        user.password = await bcrypt.hash(user.password, 10);
-    });
-
-    Person.prototype.comparePassword = function (candidatePassword) {
-        return bcrypt.compare(candidatePassword, this.password);
-    };
-
-    return Person;
+    return Phone;
 };

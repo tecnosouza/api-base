@@ -3,9 +3,10 @@ module.exports = {
     up: async (queryInterface, DataTypes) => {
         await queryInterface.createTable('error_logs', {
             id: {
-                type: DataTypes.UUID,
-                defaultValue: DataTypes.UUIDV4,
+                type: DataTypes.INTEGER,
                 primaryKey: true,
+                autoIncrement: true,
+                allowNull: false
             },
             user_id: {
                 type: DataTypes.INTEGER,

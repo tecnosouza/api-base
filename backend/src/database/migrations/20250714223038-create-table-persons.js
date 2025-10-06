@@ -1,13 +1,13 @@
-const { v4: uuidv4 } = require('uuid');
 const bcrypt = require('bcryptjs');
 
 module.exports = {
     up: async (queryInterface, DataTypes) => {
         await queryInterface.createTable('persons', {
             id: {
-                type: DataTypes.UUID,
-                defaultValue: DataTypes.UUIDV4,
+                type: DataTypes.INTEGER,
                 primaryKey: true,
+                autoIncrement: true,
+                allowNull: false
             },
             admin: {
                 type: DataTypes.BOOLEAN,
@@ -35,26 +35,6 @@ module.exports = {
                 allowNull: false,
                 unique: true,
             },
-            street: {
-                type: DataTypes.STRING,
-                allowNull: false,
-            },
-            number: {
-                type: DataTypes.STRING,
-                allowNull: false,
-            },
-            neighborhood: {
-                type: DataTypes.STRING,
-                allowNull: false,
-            },
-            city: {
-                type: DataTypes.STRING,
-                allowNull: false,
-            },
-            state: {
-                type: DataTypes.STRING,
-                allowNull: false,
-            },
             username: {
                 type: DataTypes.STRING,
                 allowNull: false,
@@ -78,22 +58,22 @@ module.exports = {
                 type: DataTypes.DATE,
                 allowNull: true,
             },
+        }, {
+            indexes: [
+                {
+                    fields: ['username'],
+                }
+            ],
         });
 
         const hashedPassword = await bcrypt.hash('123456', 10);
         await queryInterface.bulkInsert('persons', [{
-            id: uuidv4(),
             admin: true,
             name: 'Henrique',
             last_name: 'Souza',
             date_of_birth: '1992-09-26',
             rg: '123456789',
-            cpf: '12345678901',
-            street: 'Main St',
-            number: '123',
-            neighborhood: 'Downtown',
-            city: 'Anytown',
-            state: 'CA',
+            cpf: '12345678901',            
             username: 'rick',
             password: hashedPassword,
             created_at: new Date(),

@@ -20,6 +20,7 @@ module.exports = {
             password: undefined,
             host: undefined,
             port: undefined,
+            logging: console.log
         }),
     },
     staging: {
@@ -40,6 +41,15 @@ module.exports = {
             password: undefined,
             host: undefined,
             port: undefined,
+            logging: console.log,
+            dialectOptions: {
+                // força FK no SQLite
+                foreignKeys: true
+            },
+            define: {
+                // opcional: força constraints para todas as tabelas
+                foreignKeyConstraints: true
+            },
         }),
     },
     production: {
@@ -60,6 +70,15 @@ module.exports = {
             password: undefined,
             host: undefined,
             port: undefined,
+            logging: console.log,
+            dialectOptions: {
+                // força FK no SQLite
+                foreignKeys: true
+            },
+            define: {
+                // opcional: força constraints para todas as tabelas
+                foreignKeyConstraints: true
+            },
         }),
     },
 };
