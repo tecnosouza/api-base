@@ -40,7 +40,7 @@ module.exports = (apiBaseUrl) => {
                 },
             ],
         },
-        apis: ['./src/routes/general/*.js', './src/routes/shared/*.js'],
+        apis: ['./src/routes/shared/*.js', './src/routes/v1/*.js'],
     };
 
     return swaggerJsdoc(options);

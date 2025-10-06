@@ -1,3 +1,5 @@
+const path = require('path');
+
 module.exports = {
     development: {
         dialect: process.env.DB_DIALECT,
@@ -12,6 +14,13 @@ module.exports = {
             paranoid: true,
             timestamps: true,
         },
+        ...(process.env.DB_DIALECT === 'sqlite' && {
+            storage: process.env.DB_STORAGE || path.resolve(__dirname, '../database/db/dev.sqlite'),
+            username: undefined,
+            password: undefined,
+            host: undefined,
+            port: undefined,
+        }),
     },
     staging: {
         username: process.env.DB_USER,
@@ -25,6 +34,13 @@ module.exports = {
             paranoid: true,
             timestamps: true,
         },
+        ...(process.env.DB_DIALECT === 'sqlite' && {
+            storage: process.env.DB_STORAGE || path.resolve(__dirname, '../database/db/staging.sqlite'),
+            username: undefined,
+            password: undefined,
+            host: undefined,
+            port: undefined,
+        }),
     },
     production: {
         username: process.env.DB_USER,
@@ -38,5 +54,12 @@ module.exports = {
             paranoid: true,
             timestamps: true,
         },
-    }
+        ...(process.env.DB_DIALECT === 'sqlite' && {
+            storage: process.env.DB_STORAGE || path.resolve(__dirname, '../database/db/prod.sqlite'),
+            username: undefined,
+            password: undefined,
+            host: undefined,
+            port: undefined,
+        }),
+    },
 };

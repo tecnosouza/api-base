@@ -1,8 +1,8 @@
 {
     "apps": [
         {
-            "name": "uge-backend",
-            "cwd": "/home/jelastic/uge-backend/src",
+            "name": "base-backend",
+            "cwd": "/home/jelastic/base-backend/src",
             "script": "server.js",
             "instances": 1,
             "exec_mode": "fork",
@@ -20,8 +20,8 @@
             }
         },
         {
-            "name": "uge-frontend",
-            "cwd": "/home/jelastic/uge-frontend",
+            "name": "base-frontend",
+            "cwd": "/home/jelastic/base-frontend",
             "script": "./node_modules/.bin/serve",
             "args": [
                 "-s",
