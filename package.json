@@ -21,11 +21,6 @@
         "fe:build": "yarn --cwd frontend build"
     },
     "devDependencies": {
-        "husky": "^9.1.7"
-    },
-    "dependencies": {
-        "dotenv": "^17.2.3",
-        "pg": "^8.16.3",
-        "pg-dump": "^0.10.0"
+        "husky": "^9.1.7"        
     }
 }
