@@ -1,6 +1,4 @@
 const DataBaseService = require('../database/services/DataBaseService');
-const AppError = require('@utils/appError');
-const ModelName = 'PhoneNote';
 const { PhoneNote, sequelize } = require('@models/index.js');
 const { PaginationDTO } = require('@dtos/paginationDTO');
 const { CreatePhoneNoteDTO, UpdatePhoneNoteDTO, PhoneNoteResponseDTO } = require('@dtos/phoneNoteDTO');
