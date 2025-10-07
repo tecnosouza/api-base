@@ -1,45 +1,65 @@
-const loadEnv = require('../config/env');
-loadEnv();
+const { Email, sequelize } = require('@models/index.js');
+const AppError = require('@utils/appError');
+const { CreateEmailDTO, UpdateEmailDTO, EmailResponseDTO } = require('@dtos/emailDTO');
 
-const nodemailer = require('nodemailer');
-
-class EmailService {
-    constructor() {
-        const { SMTP_HOST, SMTP_PORT, SMTP_SECURE, SMTP_USER, SMTP_PASS } = process.env;
-
-        if (!SMTP_HOST || !SMTP_PORT || !SMTP_USER || !SMTP_PASS) {
-            console.error('❌ Erro: As configurações SMTP no .env estão incompletas. Verifique SMTP_HOST, SMTP_PORT, SMTP_USER e SMTP_PASS.');
-            throw new Error('Configurações SMTP incompletas.');
-        }
-
-        this.transporter = nodemailer.createTransport({
-            host: SMTP_HOST,
-            port: parseInt(SMTP_PORT, 10),
-            secure: SMTP_SECURE === 'true', // true for 465, false for other ports
-            auth: {
-                user: SMTP_USER,
-                pass: SMTP_PASS,
-            },
-        });
+exports.create = async (emailData) => {
+    const createDTO = new CreateEmailDTO(emailData);
+    const transaction = await sequelize.transaction();
+    try {
+        const email = await Email.create(createDTO, { transaction });
+        await transaction.commit();
+        return new EmailResponseDTO(email);
+    } catch (error) {
+        await transaction.rollback();
+        throw error;
     }
+};
 
-    async sendEmail(to, subject, htmlContent) {
-        try {
-            const mailOptions = {
-                from: process.env.SMTP_USER,
-                to,
-                subject,
-                html: htmlContent,
-            };
+exports.getAll = async () => {
+    const emails = await Email.findAll();
+    return emails.map(email => new EmailResponseDTO(email));
+};
 
-            const info = await this.transporter.sendMail(mailOptions);
-            console.log('Email sent: %s', to);
-            return info;
-        } catch (error) {
-            console.error('Error sending email:', error);
-            throw new Error('Failed to send email.');
-        }
+exports.getById = async (id) => {
+    const email = await Email.findByPk(id);
+    if (!email) {
+        throw new AppError('Email não encontrado.', { statusCode: 404, sourceModel: 'Email', saveDB: false });
     }
-}
+    return new EmailResponseDTO(email);
+};
 
-module.exports = new EmailService();
+exports.update = async (id, emailData) => {
+    const updateDTO = new UpdateEmailDTO(emailData);
+    const transaction = await sequelize.transaction();
+    try {
+        let email = await Email.findByPk(id, { transaction });
+        if (!email) {
+            await transaction.rollback();
+            return null;
+        }
+        await email.update(updateDTO, { transaction });
+        await transaction.commit();
+        return new EmailResponseDTO(email);
+    } catch (error) {
+        await transaction.rollback();
+        throw error;
+    }
+};
+
+exports.delete = async (id) => {
+    const transaction = await sequelize.transaction();
+    try {
+        const email = await Email.findByPk(id, { transaction });
+        if (!email) {
+            await transaction.rollback();
+            return false;
+        }
+        await email.update({ deletedAt: new Date() }, { transaction });
+        await transaction.commit();
+        return true;
+    } catch (error) {
+        await transaction.rollback();
+        throw error;
+    }
+};
+

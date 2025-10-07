@@ -15,6 +15,22 @@ module.exports = {
                 type: Sequelize.STRING,
                 allowNull: true,
             },
+            description: {
+                type: Sequelize.STRING,
+                allowNull: true,
+            },
+            values: {
+                type: Sequelize.STRING,
+                allowNull: true,
+            },
+            applications: {
+                type: Sequelize.STRING,
+                allowNull: true,
+            },
+            photo: {
+                type: Sequelize.STRING,
+                allowNull: true,
+            },
             is_active: {
                 type: Sequelize.BOOLEAN,
                 defaultValue: false,

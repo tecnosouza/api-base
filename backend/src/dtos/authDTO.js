@@ -1,3 +1,27 @@
+class AuthRegisterRequestDTO {
+    constructor({ username, password, name, lastName, dateOfBirth, rg, cpf, street, number, neighborhood, city, state }) {
+        this.username = username;
+        this.password = password;
+        this.name = name;
+        this.lastName = lastName;
+        this.dateOfBirth = dateOfBirth;
+        this.rg = rg;
+        this.cpf = cpf;
+        this.street = street;
+        this.number = number;
+        this.neighborhood = neighborhood;
+        this.city = city;
+        this.state = state;
+    }
+}
+
+class AuthLoginRequestDTO {
+    constructor({ username, password }) {
+        this.username = username;
+        this.password = password;
+    }
+}
+
 class AuthRegisterResponseDTO {
     constructor(person) {
         this.id = person.id;
@@ -23,6 +47,8 @@ class AuthLoginResponseDTO {
 }
 
 module.exports = {
+    AuthRegisterRequestDTO,
+    AuthLoginRequestDTO,
     AuthRegisterResponseDTO,
     AuthLoginResponseDTO,
 };

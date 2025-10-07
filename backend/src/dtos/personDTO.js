@@ -1,4 +1,38 @@
-class createResponseDTO {
+class CreatePersonDTO {
+    constructor({ username, password, name, lastName, dateOfBirth, rg, cpf, street, number, neighborhood, city, state }) {
+        this.username = username;
+        this.password = password;
+        this.name = name;
+        this.lastName = lastName;
+        this.dateOfBirth = dateOfBirth;
+        this.rg = rg;
+        this.cpf = cpf;
+        this.street = street;
+        this.number = number;
+        this.neighborhood = neighborhood;
+        this.city = city;
+        this.state = state;
+    }
+}
+
+class UpdatePersonDTO {
+    constructor({ username, password, name, lastName, dateOfBirth, rg, cpf, street, number, neighborhood, city, state }) {
+        this.username = username;
+        this.password = password;
+        this.name = name;
+        this.lastName = lastName;
+        this.dateOfBirth = dateOfBirth;
+        this.rg = rg;
+        this.cpf = cpf;
+        this.street = street;
+        this.number = number;
+        this.neighborhood = neighborhood;
+        this.city = city;
+        this.state = state;
+    }
+}
+
+class PersonResponseDTO {
     constructor(person) {
         this.id = person.id;
         this.username = person.username;
@@ -16,5 +50,7 @@ class createResponseDTO {
 }
 
 module.exports = {
-    createResponseDTO
+    CreatePersonDTO,
+    UpdatePersonDTO,
+    PersonResponseDTO
 };

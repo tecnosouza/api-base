@@ -1,14 +1,15 @@
 const { Person, sequelize } = require('@models/index.js');
+const AppError = require('@utils/appError');
+const ModelName = 'Person';
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { AuthRegisterResponseDTO } = require('@dtos/authDTO');
-const AppError = require('@utils/appError');
-const ModelName = 'authService';
+const { AuthRegisterRequestDTO, AuthLoginRequestDTO, AuthRegisterResponseDTO, AuthLoginResponseDTO } = require('@dtos/authDTO');
 
 exports.register = async (personData) => {
+    const registerDTO = new AuthRegisterRequestDTO(personData);
     const transaction = await sequelize.transaction();
     try {
-        const { username, password, name, lastName, dateOfBirth, rg, cpf, street, number, neighborhood, city, state } = personData;
+        const { username, password, name, lastName, dateOfBirth, rg, cpf, street, number, neighborhood, city, state } = registerDTO;
 
         let person = await Person.findOne({ where: { username }, transaction });
         if (person) {
@@ -48,7 +49,9 @@ exports.register = async (personData) => {
     }
 };
 
-exports.login = async (username, password) => {
+exports.login = async (loginData) => {
+    const loginDTO = new AuthLoginRequestDTO(loginData);
+    const { username, password } = loginDTO;
     const person = await Person.findOne({ where: { username } });
 
     if (!person) {
@@ -84,5 +87,5 @@ exports.login = async (username, password) => {
         expiresIn: process.env.JWT_EXPIRES_IN,
     });
 
-    return { token, personData };
+    return new AuthLoginResponseDTO(token, personData);
 };
