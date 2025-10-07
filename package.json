@@ -7,9 +7,11 @@
         "gl:install": "rm -fr node_modules && rm -fr frontend/node_modules && rm -fr backend/node_modules && yarn && yarn --cwd frontend && yarn --cwd backend && yarn global add sequelize-cli",
         "gl:prepare": "husky install",
         "be": "yarn --cwd backend && yarn --cwd backend dev",
-        "be:initbasepg": "docker-compose -f docker-compose-pg.yml down -v && docker-compose -f docker-compose-pg.yml up -d && sleep 3 && rm -fr backend/node_modules && yarn --cwd backend && node backend/scripts/initbase-setup.js && sleep 3 && yarn --cwd backend dev",
-        "be:initbasemysql": "docker-compose -f docker-compose-mysql.yml down -v && docker-compose -f docker-compose-mysql.yml up -d && sleep 3 && rm -fr backend/node_modules && yarn --cwd backend && node backend/scripts/initbase-setup.js && sleep 3 && yarn --cwd backend dev",
-        "be:initbasesqlite": "rm -fr backend/src/database/db/dev.sqlite && node backend/scripts/initbase-setup.js",
+        "be:initbase:pg": "docker-compose -f docker-compose-pg.yml down -v && docker-compose -f docker-compose-pg.yml up -d && sleep 3 && rm -fr backend/node_modules && yarn --cwd backend && node backend/scripts/initbase-setup.js && sleep 3 && yarn --cwd backend dev",
+        "be:initbase:mysql": "docker-compose -f docker-compose-mysql.yml down -v && docker-compose -f docker-compose-mysql.yml up -d && sleep 3 && rm -fr backend/node_modules && yarn --cwd backend && node backend/scripts/initbase-setup.js && sleep 3 && yarn --cwd backend dev",
+        "be:initbase:sqlite": "rm -fr backend/src/database/db/dev.sqlite && node backend/scripts/initbase-setup.js",
+        "be:backup:pg": "node backend/backup/backupPg.js",
+        "be:restore:pg": "node backend/backup/restorePg.js",
         "be:lint": "yarn --cwd backend lint",
         "be:migrate": "yarn --cwd backend migrate",
         "be:seeds": "yarn --cwd backend seed",
@@ -20,5 +22,10 @@
     },
     "devDependencies": {
         "husky": "^9.1.7"
+    },
+    "dependencies": {
+        "dotenv": "^17.2.3",
+        "pg": "^8.16.3",
+        "pg-dump": "^0.10.0"
     }
 }
