@@ -11,13 +11,23 @@ module.exports = {
                 autoIncrement: true,
                 allowNull: false,
             },
+            category_id: {
+                type: Sequelize.INTEGER,
+                allowNull: false,
+                references: {
+                    model: 'categories',
+                    key: 'id',
+                },
+                onUpdate: 'CASCADE',
+                onDelete: 'CASCADE',
+            },
             model: {
                 type: Sequelize.STRING,
-                allowNull: true,
+                allowNull: false,
             },
             description: {
                 type: Sequelize.STRING,
-                allowNull: true,
+                allowNull: false,
             },
             values: {
                 type: Sequelize.STRING,
@@ -49,6 +59,9 @@ module.exports = {
             },
         }, {
             indexes: [
+                {
+                    fields: ['category_id'],
+                },
                 {
                     fields: ['model'],
                 },

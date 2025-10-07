@@ -7,7 +7,7 @@ module.exports = (apiBaseUrl) => {
             info: {
                 title: 'SGT - API',
                 version: '1.0.0',
-                description: 'Uma API RESTful robusta para gerenciamento da plataforma SGT, oferecendo recursos completos de autenticação, além de operações CRUD (criação, leitura, atualização e exclusão) para administrar registros de forma eficiente e segura.'
+                description: 'Uma API RESTful robusta para gerenciamento da plataforma BASE-API, oferecendo recursos completos de autenticação, além de operações CRUD (criação, leitura, atualização e exclusão) para administrar registros de forma eficiente e segura.'
             },
             servers: [
                 {

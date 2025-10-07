@@ -1,5 +1,18 @@
 const express = require('express');
 const router = express.Router();
+const multer = require('multer');
+const path = require('path');
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'backend/uploads');
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + path.extname(file.originalname));
+    }
+});
+
+const upload = multer({ storage: storage });
 const productController = require('@controllers/productController');
 const { createValidationProduct } = require('@middleware/productMiddleware');
 
@@ -28,7 +41,7 @@ const { createValidationProduct } = require('@middleware/productMiddleware');
  *       400:
  *         description: Erro de registro
  */
-router.post('/product', createValidationProduct(), productController.create);
+router.post('/product', upload.single('image'), createValidationProduct(), productController.create);
 /**
  * @swagger
  * /product:
@@ -95,7 +108,7 @@ router.get('/product/:id', productController.getById);
  *       500:
  *         description: Erro do servidor.
  */
-router.put('/product/:id', createValidationProduct(), productController.update);
+router.put('/product/:id', upload.single('image'), createValidationProduct(), productController.update);
 
 /**
  * @swagger

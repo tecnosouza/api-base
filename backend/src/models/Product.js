@@ -12,35 +12,27 @@ module.exports = (sequelize, DataTypes) => {
             autoIncrement: true,
             allowNull: false,
         },
+        category_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        },
         model: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        description: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        values: {
             type: DataTypes.STRING,
             allowNull: true,
         },
-        category_id: {
-            type: DataTypes.INTEGER,
+        applications: {
+            type: DataTypes.STRING,
             allowNull: true,
         },
-        storage_id: {
-            type: DataTypes.INTEGER,
-            allowNull: true,
-        },
-        color_id: {
-            type: DataTypes.INTEGER,
-            allowNull: true,
-        },
-        memory_id: {
-            type: DataTypes.INTEGER,
-            allowNull: true,
-        },
-        size_id: {
-            type: DataTypes.INTEGER,
-            allowNull: true,
-        },
-        chip: {
-            type: DataTypes.INTEGER,
-            allowNull: true,
-        },
-        obs: {
+        photo: {
             type: DataTypes.STRING,
             allowNull: true,
         },
@@ -72,5 +64,6 @@ module.exports = (sequelize, DataTypes) => {
         updatedAt: 'updated_at',
         deletedAt: 'deleted_at',
     });
+	
     return Product;
 };
