@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { authenticate } = require('@middleware/authMiddleware');
 const settingController = require('@controllers/settingController');
 const { createValidationSetting } = require('@middleware/settingMiddleware');
 
@@ -28,7 +29,7 @@ const { createValidationSetting } = require('@middleware/settingMiddleware');
  *       400:
  *         description: Erro de registro
  */
-router.post('/setting', createValidationSetting(), settingController.create);
+router.post('/setting', authenticate, createValidationSetting(), settingController.create);
 /**
  * @swagger
  * /setting:
@@ -47,7 +48,7 @@ router.post('/setting', createValidationSetting(), settingController.create);
  *       500:
  *         description: Erro do servidor.
  */
-router.get('/setting', settingController.getAll);
+router.get('/setting', authenticate, settingController.getAll);
 
 /**
  * @swagger
@@ -70,7 +71,7 @@ router.get('/setting', settingController.getAll);
  *       500:
  *         description: Erro do servidor.
  */
-router.get('/setting/:id', settingController.getById);
+router.get('/setting/:id', authenticate, settingController.getById);
 
 /**
  * @swagger
@@ -101,7 +102,7 @@ router.get('/setting/:id', settingController.getById);
  *       500:
  *         description: Erro do servidor.
  */
-router.put('/setting/:id', createValidationSetting(), settingController.update);
+router.put('/setting/:id', authenticate, createValidationSetting(), settingController.update);
 
 /**
  * @swagger
@@ -124,6 +125,6 @@ router.put('/setting/:id', createValidationSetting(), settingController.update);
  *       500:
  *         description: Erro do servidor.
  */
-router.delete('/setting/:id', settingController.delete);
+router.delete('/setting/:id', authenticate, settingController.delete);
 
 module.exports = router;

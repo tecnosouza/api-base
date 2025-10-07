@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+// const { authenticate } = require('@middleware/authMiddleware');
 // const personNoteController = require('@controllers/personNoteController');
 // const { createValidationPersonNote } = require('@middleware/personNoteMiddleware');
 
@@ -28,7 +29,7 @@ const router = express.Router();
 //  *       400:
 //  *         description: Erro de registro
 //  */
-// router.post('/personNote', createValidationPersonNote(), personNoteController.create);
+// router.post('/personNote', authenticate, createValidationPersonNote(), personNoteController.create);
 // /**
 //  * @swagger
 //  * /personNote:
@@ -47,7 +48,7 @@ const router = express.Router();
 //  *       500:
 //  *         description: Erro do servidor.
 //  */
-// router.get('/personNote', personNoteController.getAll);
+// router.get('/personNote', authenticate, personNoteController.getAll);
 
 // /**
 //  * @swagger
@@ -70,7 +71,7 @@ const router = express.Router();
 //  *       500:
 //  *         description: Erro do servidor.
 //  */
-// router.get('/personNote/:id', personNoteController.getById);
+// router.get('/personNote/:id', authenticate, personNoteController.getById);
 
 // /**
 //  * @swagger
@@ -101,7 +102,7 @@ const router = express.Router();
 //  *       500:
 //  *         description: Erro do servidor.
 //  */
-// router.put('/personNote/:id', createValidationPersonNote(), personNoteController.update);
+// router.put('/personNote/:id', authenticate, createValidationPersonNote(), personNoteController.update);
 
 // /**
 //  * @swagger
@@ -124,6 +125,6 @@ const router = express.Router();
 //  *       500:
 //  *         description: Erro do servidor.
 //  */
-// router.delete('/personNote/:id', personNoteController.delete);
+// router.delete('/personNote/:id', authenticate, personNoteController.delete);
 
 module.exports = router;

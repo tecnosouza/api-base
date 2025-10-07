@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+// const { authenticate } = require('@middleware/authMiddleware');
 // const emailNoteController = require('@controllers/emailNoteController');
 // const { createValidationEmailNote } = require('@middleware/emailNoteMiddleware');
 
@@ -28,7 +29,7 @@ const router = express.Router();
 //  *       400:
 //  *         description: Erro de registro
 //  */
-// router.post('/emailNote', createValidationEmailNote(), emailNoteController.create);
+// router.post('/emailNote', authenticate, createValidationEmailNote(), emailNoteController.create);
 // /**
 //  * @swagger
 //  * /emailNote:
@@ -47,7 +48,7 @@ const router = express.Router();
 //  *       500:
 //  *         description: Erro do servidor.
 //  */
-// router.get('/emailNote', emailNoteController.getAll);
+// router.get('/emailNote', authenticate, emailNoteController.getAll);
 
 // /**
 //  * @swagger
@@ -70,7 +71,7 @@ const router = express.Router();
 //  *       500:
 //  *         description: Erro do servidor.
 //  */
-// router.get('/emailNote/:id', emailNoteController.getById);
+// router.get('/emailNote/:id', authenticate, emailNoteController.getById);
 
 // /**
 //  * @swagger
@@ -101,7 +102,7 @@ const router = express.Router();
 //  *       500:
 //  *         description: Erro do servidor.
 //  */
-// router.put('/emailNote/:id', createValidationEmailNote(), emailNoteController.update);
+// router.put('/emailNote/:id', authenticate, createValidationEmailNote(), emailNoteController.update);
 
 // /**
 //  * @swagger
@@ -124,6 +125,6 @@ const router = express.Router();
 //  *       500:
 //  *         description: Erro do servidor.
 //  */
-// router.delete('/emailNote/:id', emailNoteController.delete);
+// router.delete('/emailNote/:id', authenticate, emailNoteController.delete);
 
 module.exports = router;

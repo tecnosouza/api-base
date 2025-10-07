@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+// const { authenticate } = require('@middleware/authMiddleware');
 // const phoneNoteController = require('@controllers/phoneNoteController');
 // const { createValidationPhoneNote } = require('@middleware/phoneNoteMiddleware');
 
@@ -28,7 +29,7 @@ const router = express.Router();
 //  *       400:
 //  *         description: Erro de registro
 //  */
-// router.post('/phoneNote', createValidationPhoneNote(), phoneNoteController.create);
+// router.post('/phoneNote', authenticate, createValidationPhoneNote(), phoneNoteController.create);
 // /**
 //  * @swagger
 //  * /phoneNote:
@@ -47,7 +48,7 @@ const router = express.Router();
 //  *       500:
 //  *         description: Erro do servidor.
 //  */
-// router.get('/phoneNote', phoneNoteController.getAll);
+// router.get('/phoneNote', authenticate, phoneNoteController.getAll);
 
 // /**
 //  * @swagger
@@ -70,7 +71,7 @@ const router = express.Router();
 //  *       500:
 //  *         description: Erro do servidor.
 //  */
-// router.get('/phoneNote/:id', phoneNoteController.getById);
+// router.get('/phoneNote/:id', authenticate, phoneNoteController.getById);
 
 // /**
 //  * @swagger
@@ -101,7 +102,7 @@ const router = express.Router();
 //  *       500:
 //  *         description: Erro do servidor.
 //  */
-// router.put('/phoneNote/:id', createValidationPhoneNote(), phoneNoteController.update);
+// router.put('/phoneNote/:id', authenticate, createValidationPhoneNote(), phoneNoteController.update);
 
 // /**
 //  * @swagger
@@ -124,6 +125,6 @@ const router = express.Router();
 //  *       500:
 //  *         description: Erro do servidor.
 //  */
-// router.delete('/phoneNote/:id', phoneNoteController.delete);
+// router.delete('/phoneNote/:id', authenticate, phoneNoteController.delete);
 
 module.exports = router;

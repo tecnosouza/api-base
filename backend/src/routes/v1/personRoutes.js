@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { authenticate } = require('@middleware/authMiddleware');
 const personController = require('@controllers/personController');
 const { createValidationPerson } = require('@middleware/personMiddleware');
 
@@ -28,7 +29,7 @@ const { createValidationPerson } = require('@middleware/personMiddleware');
  *       400:
  *         description: Erro de registro
  */
-router.post('/person', createValidationPerson(), personController.create);
+router.post('/person', authenticate, createValidationPerson(), personController.create);
 /**
  * @swagger
  * /person:
@@ -47,7 +48,7 @@ router.post('/person', createValidationPerson(), personController.create);
  *       500:
  *         description: Erro do servidor.
  */
-router.get('/person', personController.getAll);
+router.get('/person', authenticate, personController.getAll);
 
 /**
  * @swagger
@@ -70,7 +71,7 @@ router.get('/person', personController.getAll);
  *       500:
  *         description: Erro do servidor.
  */
-router.get('/person/:id', personController.getById);
+router.get('/person/:id', authenticate, personController.getById);
 
 /**
  * @swagger
@@ -101,7 +102,7 @@ router.get('/person/:id', personController.getById);
  *       500:
  *         description: Erro do servidor.
  */
-router.put('/person/:id', createValidationPerson(), personController.update);
+router.put('/person/:id', authenticate, createValidationPerson(), personController.update);
 
 /**
  * @swagger
@@ -124,6 +125,6 @@ router.put('/person/:id', createValidationPerson(), personController.update);
  *       500:
  *         description: Erro do servidor.
  */
-router.delete('/person/:id', personController.delete);
+router.delete('/person/:id', authenticate, personController.delete);
 
 module.exports = router;

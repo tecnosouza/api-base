@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+// const { authenticate } = require('@middleware/authMiddleware');
 // const errorLogController = require('@controllers/errorLogController');
 // const { createValidationErrorLog } = require('@middleware/errorLogMiddleware');
 
@@ -28,7 +29,7 @@ const router = express.Router();
 //  *       400:
 //  *         description: Erro de registro
 //  */
-// router.post('/errorLog', createValidationErrorLog(), errorLogController.create);
+// router.post('/errorLog', authenticate, createValidationErrorLog(), errorLogController.create);
 // /**
 //  * @swagger
 //  * /errorLog:
@@ -47,7 +48,7 @@ const router = express.Router();
 //  *       500:
 //  *         description: Erro do servidor.
 //  */
-// router.get('/errorLog', errorLogController.getAll);
+// router.get('/errorLog', authenticate, errorLogController.getAll);
 
 // /**
 //  * @swagger
@@ -70,7 +71,7 @@ const router = express.Router();
 //  *       500:
 //  *         description: Erro do servidor.
 //  */
-// router.get('/errorLog/:id', errorLogController.getById);
+// router.get('/errorLog/:id', authenticate, errorLogController.getById);
 
 // /**
 //  * @swagger
@@ -101,7 +102,7 @@ const router = express.Router();
 //  *       500:
 //  *         description: Erro do servidor.
 //  */
-// router.put('/errorLog/:id', createValidationErrorLog(), errorLogController.update);
+// router.put('/errorLog/:id', authenticate, createValidationErrorLog(), errorLogController.update);
 
 // /**
 //  * @swagger
@@ -124,6 +125,6 @@ const router = express.Router();
 //  *       500:
 //  *         description: Erro do servidor.
 //  */
-// router.delete('/errorLog/:id', errorLogController.delete);
+// router.delete('/errorLog/:id', authenticate, errorLogController.delete);
 
 module.exports = router;

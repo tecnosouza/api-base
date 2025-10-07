@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+// const { authenticate } = require('@middleware/authMiddleware');
 // const emailController = require('@controllers/emailController');
 // const { createValidationEmail } = require('@middleware/emailMiddleware');
 
@@ -28,7 +29,7 @@ const router = express.Router();
 //  *       400:
 //  *         description: Erro de registro
 //  */
-// router.post('/email', createValidationEmail(), emailController.create);
+// router.post('/email', authenticate, createValidationEmail(), emailController.create);
 // /**
 //  * @swagger
 //  * /email:
@@ -47,7 +48,7 @@ const router = express.Router();
 //  *       500:
 //  *         description: Erro do servidor.
 //  */
-// router.get('/email', emailController.getAll);
+// router.get('/email', authenticate, emailController.getAll);
 
 // /**
 //  * @swagger
@@ -70,7 +71,7 @@ const router = express.Router();
 //  *       500:
 //  *         description: Erro do servidor.
 //  */
-// router.get('/email/:id', emailController.getById);
+// router.get('/email/:id', authenticate, emailController.getById);
 
 // /**
 //  * @swagger
@@ -101,7 +102,7 @@ const router = express.Router();
 //  *       500:
 //  *         description: Erro do servidor.
 //  */
-// router.put('/email/:id', createValidationEmail(), emailController.update);
+// router.put('/email/:id', authenticate, createValidationEmail(), emailController.update);
 
 // /**
 //  * @swagger
@@ -124,6 +125,6 @@ const router = express.Router();
 //  *       500:
 //  *         description: Erro do servidor.
 //  */
-// router.delete('/email/:id', emailController.delete);
+// router.delete('/email/:id', authenticate, emailController.delete);
 
 module.exports = router;

@@ -31,9 +31,8 @@ exports.getAll = async (req) => {
         order: (pagination.orderBy && pagination.orderBy.length > 0) ? pagination.orderBy : [['id', 'DESC']],
         limit: pagination.limit ? parseInt(pagination.limit) : null
     });
-    
-    pagination.data = accessLevels.map(accessLevel => new AccessLevelResponseDTO(accessLevel));
-    return pagination;
+
+    return { data: new AccessLevelResponseDTO(accessLevels), pagination: pagination };
 };
 
 exports.getById = async (id) => {

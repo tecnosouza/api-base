@@ -1,15 +1,16 @@
-const successResponse = (res, message, data, statusCode = 200, pagination = null) => {
+const successResponse = (res, message, data) => {
     const response = {
         success: true,
         message: message,
-        data: data,
+        data: data.data,
+        code: res.code ?? 200
     };
 
-    if (pagination) {
-        response.pagination = pagination;
+    if (data.pagination) {
+        response.pagination = data.pagination;
     }
 
-    return res.status(statusCode).json(response);
+    return res.status(res.code ?? 200).json(response);
 };
 
 const errorResponse = (res, message, errors, statusCode = 400) => {

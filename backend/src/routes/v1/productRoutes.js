@@ -13,6 +13,7 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage });
+const { authenticate } = require('@middleware/authMiddleware');
 const productController = require('@controllers/productController');
 const { createValidationProduct } = require('@middleware/productMiddleware');
 
@@ -41,7 +42,7 @@ const { createValidationProduct } = require('@middleware/productMiddleware');
  *       400:
  *         description: Erro de registro
  */
-router.post('/product', upload.single('image'), createValidationProduct(), productController.create);
+router.post('/product', authenticate, upload.single('image'), createValidationProduct(), productController.create);
 /**
  * @swagger
  * /product:
@@ -60,7 +61,7 @@ router.post('/product', upload.single('image'), createValidationProduct(), produ
  *       500:
  *         description: Erro do servidor.
  */
-router.get('/product', productController.getAll);
+router.get('/product', authenticate, productController.getAll);
 
 /**
  * @swagger
@@ -83,7 +84,7 @@ router.get('/product', productController.getAll);
  *       500:
  *         description: Erro do servidor.
  */
-router.get('/product/:id', productController.getById);
+router.get('/product/:id', authenticate, productController.getById);
 
 /**
  * @swagger
@@ -114,7 +115,7 @@ router.get('/product/:id', productController.getById);
  *       500:
  *         description: Erro do servidor.
  */
-router.put('/product/:id', upload.single('image'), createValidationProduct(), productController.update);
+router.put('/product/:id', authenticate, upload.single('image'), createValidationProduct(), productController.update);
 
 /**
  * @swagger
@@ -137,6 +138,6 @@ router.put('/product/:id', upload.single('image'), createValidationProduct(), pr
  *       500:
  *         description: Erro do servidor.
  */
-router.delete('/product/:id', productController.delete);
+router.delete('/product/:id', authenticate, productController.delete);
 
 module.exports = router;

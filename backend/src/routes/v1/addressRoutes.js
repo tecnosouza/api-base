@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+// const { authenticate } = require('@middleware/authMiddleware');
 // const addressController = require('@controllers/addressController');
 // const { createValidationAddress } = require('@middleware/addressMiddleware');
 
@@ -28,7 +29,7 @@ const router = express.Router();
 //  *       400:
 //  *         description: Erro de registro
 //  */
-// router.post('/address', createValidationAddress(), addressController.create);
+// router.post('/address', authenticate, createValidationAddress(), addressController.create);
 // /**
 //  * @swagger
 //  * /address:
@@ -47,7 +48,7 @@ const router = express.Router();
 //  *       500:
 //  *         description: Erro do servidor.
 //  */
-// router.get('/address', addressController.getAll);
+// router.get('/address', authenticate, addressController.getAll);
 
 // /**
 //  * @swagger
@@ -70,7 +71,7 @@ const router = express.Router();
 //  *       500:
 //  *         description: Erro do servidor.
 //  */
-// router.get('/address/:id', addressController.getById);
+// router.get('/address/:id', authenticate, addressController.getById);
 
 // /**
 //  * @swagger
@@ -101,7 +102,7 @@ const router = express.Router();
 //  *       500:
 //  *         description: Erro do servidor.
 //  */
-// router.put('/address/:id', createValidationAddress(), addressController.update);
+// router.put('/address/:id', authenticate, createValidationAddress(), addressController.update);
 
 // /**
 //  * @swagger
@@ -124,6 +125,6 @@ const router = express.Router();
 //  *       500:
 //  *         description: Erro do servidor.
 //  */
-// router.delete('/address/:id', addressController.delete);
+// router.delete('/address/:id', authenticate, addressController.delete);
 
 module.exports = router;

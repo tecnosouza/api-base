@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+// const { authenticate } = require('@middleware/authMiddleware');
 // const phoneController = require('@controllers/phoneController');
 // const { createValidationPhone } = require('@middleware/phoneMiddleware');
 
@@ -28,7 +29,7 @@ const router = express.Router();
 //  *       400:
 //  *         description: Erro de registro
 //  */
-// router.post('/phone', createValidationPhone(), phoneController.create);
+// router.post('/phone', authenticate, createValidationPhone(), phoneController.create);
 // /**
 //  * @swagger
 //  * /phone:
@@ -47,7 +48,7 @@ const router = express.Router();
 //  *       500:
 //  *         description: Erro do servidor.
 //  */
-// router.get('/phone', phoneController.getAll);
+// router.get('/phone', authenticate, phoneController.getAll);
 
 // /**
 //  * @swagger
@@ -70,7 +71,7 @@ const router = express.Router();
 //  *       500:
 //  *         description: Erro do servidor.
 //  */
-// router.get('/phone/:id', phoneController.getById);
+// router.get('/phone/:id', authenticate, phoneController.getById);
 
 // /**
 //  * @swagger
@@ -101,7 +102,7 @@ const router = express.Router();
 //  *       500:
 //  *         description: Erro do servidor.
 //  */
-// router.put('/phone/:id', createValidationPhone(), phoneController.update);
+// router.put('/phone/:id', authenticate, createValidationPhone(), phoneController.update);
 
 // /**
 //  * @swagger
@@ -124,6 +125,6 @@ const router = express.Router();
 //  *       500:
 //  *         description: Erro do servidor.
 //  */
-// router.delete('/phone/:id', phoneController.delete);
+// router.delete('/phone/:id', authenticate, phoneController.delete);
 
 module.exports = router;

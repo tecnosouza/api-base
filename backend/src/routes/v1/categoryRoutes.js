@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { authenticate } = require('@middleware/authMiddleware');
 const categoryController = require('@controllers/categoryController');
 const { createValidationCategory } = require('@middleware/categoryMiddleware');
 
@@ -28,7 +29,7 @@ const { createValidationCategory } = require('@middleware/categoryMiddleware');
  *       400:
  *         description: Erro de registro
  */
-router.post('/category', createValidationCategory(), categoryController.create);
+router.post('/category', authenticate, createValidationCategory(), categoryController.create);
 /**
  * @swagger
  * /category:
@@ -47,7 +48,7 @@ router.post('/category', createValidationCategory(), categoryController.create);
  *       500:
  *         description: Erro do servidor.
  */
-router.get('/category', categoryController.getAll);
+router.get('/category', authenticate, categoryController.getAll);
 
 /**
  * @swagger
@@ -70,7 +71,7 @@ router.get('/category', categoryController.getAll);
  *       500:
  *         description: Erro do servidor.
  */
-router.get('/category/:id', categoryController.getById);
+router.get('/category/:id', authenticate, categoryController.getById);
 
 /**
  * @swagger
@@ -101,7 +102,7 @@ router.get('/category/:id', categoryController.getById);
  *       500:
  *         description: Erro do servidor.
  */
-router.put('/category/:id', createValidationCategory(), categoryController.update);
+router.put('/category/:id', authenticate, createValidationCategory(), categoryController.update);
 
 /**
  * @swagger
@@ -124,6 +125,6 @@ router.put('/category/:id', createValidationCategory(), categoryController.updat
  *       500:
  *         description: Erro do servidor.
  */
-router.delete('/category/:id', categoryController.delete);
+router.delete('/category/:id', authenticate, categoryController.delete);
 
 module.exports = router;
