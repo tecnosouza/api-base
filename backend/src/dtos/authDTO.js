@@ -1,5 +1,3 @@
-const { PersonResponseDTO } = require('./personDTO');
-
 class AuthLoginRequestDTO {
     constructor({ username, password }) {
         this.username = username;
@@ -8,9 +6,8 @@ class AuthLoginRequestDTO {
 }
 
 class AuthLoginResponseDTO {
-    constructor(token, personData) {
+    constructor(token) {
         this.token = token;
-        this.person = new PersonResponseDTO(personData);
     }
 }
 

@@ -37,7 +37,15 @@ module.exports = {
                 type: Sequelize.STRING,
                 allowNull: true,
             },
-            photo: {
+            photo_name: {
+                type: Sequelize.STRING,
+                allowNull: true,
+            },
+            photo_size: {
+                type: Sequelize.FLOAT,
+                allowNull: true,
+            },
+            photo_link: {
                 type: Sequelize.STRING,
                 allowNull: true,
             },

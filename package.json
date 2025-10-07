@@ -4,6 +4,7 @@
     "main": "index.js",
     "license": "MIT",
     "scripts": {
+        "gl:init": "yarn gl:install && yarn be:initbase:sqlite && yarn be",
         "gl:install": "rm -fr node_modules && rm -fr frontend/node_modules && rm -fr backend/node_modules && yarn && yarn --cwd frontend && yarn --cwd backend && yarn global add sequelize-cli",
         "gl:prepare": "husky install",
         "be": "yarn --cwd backend && yarn --cwd backend dev",

@@ -4,7 +4,7 @@ const { successResponse } = require('../utils/responseUtils');
 
 exports.create = async (req, res, next) => {
     try {
-        const product = await productService.create(req.body);
+        const product = await productService.create(req);
         successResponse(res, 'Registro realizado com sucesso.', new createResponseDTO(product), 201);
     } catch (err) {
         next(err);

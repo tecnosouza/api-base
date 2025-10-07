@@ -23,6 +23,13 @@ if (!fs.existsSync(dbPath)) {
     console.log(`📁 Pasta de banco criada em ${dbPath}`);
 }
 
+// Cria pasta de database se necessário (para SQLite)
+const uploadPath = path.resolve(__dirname, '../uploads/tmp');
+if (!fs.existsSync(uploadPath)) {
+    fs.mkdirSync(uploadPath, { recursive: true });
+    console.log(`📁 Pasta de uploads criada em ${uploadPath}`);
+}
+
 // Middleware básicos
 app.set('trust proxy', 1);
 app.use(cors({
@@ -31,7 +38,13 @@ app.use(cors({
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
 }));
+
+// Serve arquivos da pasta 'public'
 app.use(express.static('public'));
+
+// Serve arquivos estáticos da pasta 'uploads'
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+
 app.use(express.json({ limit: '10mb' })); // protege contra payloads grandes
 
 // Timeout middleware

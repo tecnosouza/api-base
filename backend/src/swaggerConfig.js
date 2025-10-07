@@ -138,38 +138,6 @@ module.exports = (apiBaseUrl) => {
                             }
                         }
                     },
-                    ProductInput: {
-                        type: 'object',
-                        required: ['name', 'description', 'price', 'categoryId'],
-                        properties: {
-                            name: {
-                                type: 'string',
-                                description: 'Nome do produto',
-                                example: 'Smartphone X'
-                            },
-                            description: {
-                                type: 'string',
-                                description: 'Descrição detalhada do produto',
-                                example: 'Um smartphone de última geração com câmera de 108MP.'
-                            },
-                            price: {
-                                type: 'number',
-                                format: 'float',
-                                description: 'Preço do produto',
-                                example: 999.99
-                            },
-                            categoryId: {
-                                type: 'string',
-                                description: 'ID da categoria do produto',
-                                example: 'uuid-category-789'
-                            },
-                            image: {
-                                type: 'string',
-                                format: 'binary',
-                                description: 'Imagem do produto (upload de arquivo)'
-                            }
-                        }
-                    },
                     SettingInput: {
                         type: 'object',
                         required: ['key', 'value'],
@@ -183,6 +151,51 @@ module.exports = (apiBaseUrl) => {
                                 type: 'string',
                                 description: 'Valor da configuração',
                                 example: 'Minha Aplicação'
+                            }
+                        }
+                    }
+                },
+                requestBodies: {
+                    ProductRequestBody: {
+                        required: true,
+                        content: {
+                            'multipart/form-data': {
+                                schema: {
+                                    type: 'object',
+                                    properties: {
+                                        model: {
+                                            type: 'string',
+                                            description: 'Nome do produto (Ex: VIAFIX)',
+                                            example: '',
+                                        },
+                                        description: {
+                                            type: 'string',
+                                            description: 'Descrição detalhada do produto (Ex: Produto de alta qualidade para uso industrial)',
+                                            example: '',
+                                        },
+                                        values: {
+                                            type: 'string',
+                                            description: 'Os valores do produto (Ex: Embalagens de 5kg e 20kg.)',
+                                            example: '',
+                                        },
+                                        applications: {
+                                            type: 'string',
+                                            description: 'As aplicações do produto (Ex: Assentamento de pisos cerâmicos, porcelanatos e pedras naturais.)',
+                                            example: '',
+                                        },
+                                        category_id: {
+                                            type: 'string',
+                                            description: 'ID da categoria do produto (Ex: 1)',
+                                            example: '',
+                                        },
+                                        image: {
+                                            type: 'string',
+                                            format: 'binary',
+                                            description: 'Imagem do produto (upload de arquivo)'
+                                        }
+                                    },
+                                    required: ['model', 'description', 'category_id']
+                                }
                             }
                         }
                     }

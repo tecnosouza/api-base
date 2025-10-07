@@ -2,20 +2,18 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const path = require('path');
-
+const { authenticate } = require('@middleware/authMiddleware');
+const productController = require('@controllers/productController');
+const { createValidationProduct } = require('@middleware/productMiddleware');
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'backend/uploads');
+        cb(null, 'uploads/tmp');
     },
     filename: (req, file, cb) => {
         cb(null, Date.now() + path.extname(file.originalname));
     }
 });
-
 const upload = multer({ storage: storage });
-const { authenticate } = require('@middleware/authMiddleware');
-const productController = require('@controllers/productController');
-const { createValidationProduct } = require('@middleware/productMiddleware');
 
 /**
  * @swagger
@@ -32,10 +30,7 @@ const { createValidationProduct } = require('@middleware/productMiddleware');
  *     tags: [Produtos]
  *     requestBody:
  *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/ProductInput'
+ *       $ref: '#/components/requestBodies/ProductRequestBody'
  *     responses:
  *       201:
  *         description: Produto registrado com sucesso.
@@ -43,6 +38,7 @@ const { createValidationProduct } = require('@middleware/productMiddleware');
  *         description: Erro de registro
  */
 router.post('/product', authenticate, upload.single('image'), createValidationProduct(), productController.create);
+
 /**
  * @swagger
  * /product:
@@ -101,10 +97,7 @@ router.get('/product/:id', authenticate, productController.getById);
  *         description: ID do Produto
  *     requestBody:
  *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/ProductInput'
+ *       $ref: '#/components/requestBodies/ProductRequestBody'
  *     responses:
  *       200:
  *         description: Produto atualizado com sucesso.
@@ -115,7 +108,7 @@ router.get('/product/:id', authenticate, productController.getById);
  *       500:
  *         description: Erro do servidor.
  */
-router.put('/product/:id', authenticate, upload.single('image'), createValidationProduct(), productController.update);
+router.put('/product/:id', authenticate, createValidationProduct(), upload.single('image'), productController.update);
 
 /**
  * @swagger
