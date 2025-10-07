@@ -13,7 +13,7 @@ exports.create = async (req, res, next) => {
 
 exports.getAll = async (req, res, next) => {
     try {
-        const addresses = await addressService.getAll();
+        const addresses = await addressService.getAll(req.query);
         successResponse(res, 'Lista de endereços retornada com sucesso.', addresses);
     } catch (err) {
         next(err);

@@ -1,7 +1,9 @@
-const DataBaseService = require('../database/services/DataBaseService');
-const { Product, sequelize } = require('@models/index.js');
 const AppError = require('@utils/appError');
 const ModelName = 'productService';
+const DataBaseService = require('../database/services/DataBaseService');
+const { ProductsResponseDTO } = require('@dtos/productsResponseDTO');
+const { PaginationDTO } = require('@dtos/paginationDTO');
+const { Product, sequelize } = require('@models/index.js');
 
 exports.create = async (productData) => {
     const transaction = await sequelize.transaction();
@@ -44,9 +46,9 @@ exports.create = async (productData) => {
     }
 };
 
-exports.getAll = async (req) => {
+exports.getAll = async (query) => {
     const include = [];
-    const pagination = await DataBaseService.dataFilter(Product, req.query, include);
+    const pagination = await DataBaseService.dataFilter(Product, query, include);
     if (pagination.code != 200) {
         return pagination;
     }
@@ -59,8 +61,7 @@ exports.getAll = async (req) => {
         limit: pagination.limit ? parseInt(pagination.limit) : null
     });
     
-    pagination.data = products;
-    return pagination;
+    return { data: products.map(product => new ProductsResponseDTO(product)), pagination: new PaginationDTO(pagination) };
 };
 
 exports.getById = async (id) => {

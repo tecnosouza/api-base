@@ -1,9 +1,11 @@
 class PaginationDTO {
     constructor(pagination) {
-        this.current_page = parseInt(pagination.current_page);
+        this.limit = String(pagination.limit);
+        this.page = String(pagination.page);
+        this.prev_page_url = pagination.prev_page_url;
+        this.next_page_url = pagination.next_page_url;
         this.last_page = parseInt(pagination.last_page);
         this.total = parseInt(pagination.total);
-        this.per_page = parseInt(pagination.limit);
     }
 }
 

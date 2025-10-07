@@ -1,4 +1,4 @@
-class createResponseDTO {
+class SettingResponseDTO {
     constructor(setting) {
         this.id = setting.id;
         this.person_id = setting.person_id;
@@ -9,5 +9,5 @@ class createResponseDTO {
 }
 
 module.exports = {
-    createResponseDTO
+    SettingResponseDTO
 };

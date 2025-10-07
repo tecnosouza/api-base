@@ -1,34 +1,26 @@
 class CreatePersonDTO {
-    constructor({ username, password, name, lastName, dateOfBirth, rg, cpf, street, number, neighborhood, city, state }) {
+    constructor({ username, password, name, last_name, date_of_birth, rg, cpf, admin }) {
         this.username = username;
         this.password = password;
         this.name = name;
-        this.lastName = lastName;
-        this.dateOfBirth = dateOfBirth;
+        this.last_name = last_name;
+        this.date_of_birth = date_of_birth;
         this.rg = rg;
         this.cpf = cpf;
-        this.street = street;
-        this.number = number;
-        this.neighborhood = neighborhood;
-        this.city = city;
-        this.state = state;
+        this.admin = admin;
     }
 }
 
 class UpdatePersonDTO {
-    constructor({ username, password, name, lastName, dateOfBirth, rg, cpf, street, number, neighborhood, city, state }) {
+    constructor({ username, password, name, last_name, date_of_birth, rg, cpf, admin }) {
         this.username = username;
         this.password = password;
         this.name = name;
-        this.lastName = lastName;
-        this.dateOfBirth = dateOfBirth;
+        this.last_name = last_name;
+        this.date_of_birth = date_of_birth;
         this.rg = rg;
         this.cpf = cpf;
-        this.street = street;
-        this.number = number;
-        this.neighborhood = neighborhood;
-        this.city = city;
-        this.state = state;
+        this.admin = admin;
     }
 }
 
@@ -37,15 +29,14 @@ class PersonResponseDTO {
         this.id = person.id;
         this.username = person.username;
         this.name = person.name;
-        this.lastName = person.lastName;
-        this.dateOfBirth = person.dateOfBirth;
+        this.last_name = person.last_name;
+        this.date_of_birth = person.date_of_birth;
         this.rg = person.rg;
         this.cpf = person.cpf;
-        this.street = person.street;
-        this.number = person.number;
-        this.neighborhood = person.neighborhood;
-        this.city = person.city;
-        this.state = person.state;
+        this.admin = person.admin;
+        this.created_at = person.created_at;
+        this.updated_at = person.updated_at;
+        this.deleted_at = person.deleted_at;
     }
 }
 

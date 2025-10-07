@@ -2,7 +2,9 @@ const DataBaseService = require('../database/services/DataBaseService');
 const AppError = require('@utils/appError');
 const ModelName = 'settingService';
 const { Setting, sequelize } = require('@models/index.js');
-const attributes = { exclude: ['createdAt', 'updatedAt', 'deleted_at'] };
+const { SettingResponseDTO } = require('@dtos/settingDTO');
+const { PaginationDTO } = require('@dtos/paginationDTO');
+const attributes = { exclude: ['created_at', 'updated_at', 'deleted_at'] };
 
 exports.create = async (settingData) => {
     const transaction = await sequelize.transaction();
@@ -40,9 +42,9 @@ exports.create = async (settingData) => {
     }
 };
 
-exports.getAll = async (req) => {
+exports.getAll = async (query) => {
     const include = [];
-    const pagination = await DataBaseService.dataFilter(Setting, req.query, include);
+    const pagination = await DataBaseService.dataFilter(Setting, query, include);
     if (pagination.code != 200) {
         return pagination;
     }
@@ -55,8 +57,7 @@ exports.getAll = async (req) => {
         limit: pagination.limit ? parseInt(pagination.limit) : null
     });
     
-    pagination.data = settings;
-    return pagination;
+    return { data: settings.map(setting => new SettingResponseDTO(setting)), pagination: new PaginationDTO(pagination) };
 };
 
 exports.getById = async (id) => {

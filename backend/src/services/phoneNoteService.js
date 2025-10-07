@@ -2,6 +2,7 @@ const DataBaseService = require('../database/services/DataBaseService');
 const AppError = require('@utils/appError');
 const ModelName = 'PhoneNote';
 const { PhoneNote, sequelize } = require('@models/index.js');
+const { PaginationDTO } = require('@dtos/paginationDTO');
 const { CreatePhoneNoteDTO, UpdatePhoneNoteDTO, PhoneNoteResponseDTO } = require('@dtos/phoneNoteDTO');
 
 exports.create = async (phoneNoteData) => {
@@ -17,9 +18,9 @@ exports.create = async (phoneNoteData) => {
     }
 };
 
-exports.getAll = async (req) => {
+exports.getAll = async (query) => {
     const include = [];
-    const pagination = await DataBaseService.dataFilter(PhoneNote, req.query, include);
+    const pagination = await DataBaseService.dataFilter(PhoneNote, query, include);
     if (pagination.code != 200) {
         return pagination;
     }
@@ -32,17 +33,9 @@ exports.getAll = async (req) => {
         limit: pagination.limit ? parseInt(pagination.limit) : null
     });
     
-    pagination.data = phoneNotes.map(phoneNote => new PhoneNoteResponseDTO(phoneNote));
-    return pagination;
+    return { data: phoneNotes.map(phoneNote => new PhoneNoteResponseDTO(phoneNote)), pagination: new PaginationDTO(pagination) };
 };
 
-exports.getById = async (id) => {
-    const phoneNote = await PhoneNote.findByPk(id);
-    if (!phoneNote) {
-        throw new AppError('Nota de telefone não encontrada.', { statusCode: 404, sourceModel: ModelName, saveDB: false });
-    }
-    return new PhoneNoteResponseDTO(phoneNote);
-};
 
 exports.update = async (id, phoneNoteData) => {
     const updateDTO = new UpdatePhoneNoteDTO(phoneNoteData);

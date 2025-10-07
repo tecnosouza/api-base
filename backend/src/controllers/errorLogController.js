@@ -13,7 +13,7 @@ exports.create = async (req, res, next) => {
 
 exports.getAll = async (req, res, next) => {
     try {
-        const errorLogs = await errorLogService.getAll();
+        const errorLogs = await errorLogService.getAll(req.query);
         successResponse(res, 'Lista de logs de erro retornada com sucesso.', errorLogs);
     } catch (err) {
         next(err);

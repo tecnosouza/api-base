@@ -1,28 +1,31 @@
 class CreateEmailDTO {
-    constructor({ personId, email, isMain }) {
-        this.personId = personId;
+    constructor({ person_id, provider, email, default: isDefault }) {
+        this.person_id = person_id;
+        this.provider = provider;
         this.email = email;
-        this.isMain = isMain;
+        this.default = isDefault;
     }
 }
 
 class UpdateEmailDTO {
-    constructor({ personId, email, isMain }) {
-        this.personId = personId;
+    constructor({ person_id, provider, email, default: isDefault }) {
+        this.person_id = person_id;
+        this.provider = provider;
         this.email = email;
-        this.isMain = isMain;
+        this.default = isDefault;
     }
 }
 
 class EmailResponseDTO {
     constructor(email) {
         this.id = email.id;
-        this.personId = email.personId;
+        this.person_id = email.person_id;
+        this.provider = email.provider;
         this.email = email.email;
-        this.isMain = email.isMain;
-        this.createdAt = email.createdAt;
-        this.updatedAt = email.updatedAt;
-        this.deletedAt = email.deletedAt;
+        this.default = email.default;
+        this.created_at = email.created_at;
+        this.updated_at = email.updated_at;
+        this.deleted_at = email.deleted_at;
     }
 }
 

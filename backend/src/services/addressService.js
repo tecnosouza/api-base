@@ -1,7 +1,8 @@
 const DataBaseService = require('../database/services/DataBaseService');
 const { Address, sequelize } = require('@models/index.js');
 const { CreateAddressDTO, UpdateAddressDTO, AddressResponseDTO } = require('@dtos/addressDTO');
-const attributes = { exclude: ['createdAt', 'updatedAt', 'deleted_at'] };
+const { PaginationDTO } = require('@dtos/paginationDTO');
+const attributes = { exclude: ['created_at', 'updated_at', 'deleted_at'] };
 
 exports.create = async (addressData) => {
     const createDTO = new CreateAddressDTO(addressData);
@@ -16,9 +17,9 @@ exports.create = async (addressData) => {
     }
 };
 
-exports.getAll = async (req) => {
+exports.getAll = async (query) => {
     const include = [];
-    const pagination = await DataBaseService.dataFilter(Address, req.query, include);
+    const pagination = await DataBaseService.dataFilter(Address, query, include);
     if (pagination.code != 200) {
         return pagination;
     }
@@ -30,9 +31,8 @@ exports.getAll = async (req) => {
         order: (pagination.orderBy && pagination.orderBy.length > 0) ? pagination.orderBy : [['id', 'DESC']],
         limit: pagination.limit ? parseInt(pagination.limit) : null
     });
-    
-    pagination.data = addresses.map(address => new AddressResponseDTO(address));
-    return pagination;
+
+    return { data: addresses.map(address => new AddressResponseDTO(address)), pagination: new PaginationDTO(pagination) };
 };
 
 exports.getById = async (id) => {

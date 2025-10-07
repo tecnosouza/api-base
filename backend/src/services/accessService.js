@@ -1,7 +1,8 @@
 const DataBaseService = require('../database/services/DataBaseService');
 const { Access, sequelize } = require('@models/index.js');
 const { CreateAccessDTO, UpdateAccessDTO, AccessResponseDTO } = require('@dtos/accessDTO');
-const attributes = { exclude: ['createdAt', 'updatedAt', 'deleted_at'] };
+const { PaginationDTO } = require('@dtos/paginationDTO');
+const attributes = { exclude: ['created_at', 'updated_at', 'deleted_at'] };
 
 exports.create = async (accessData) => {
     const createDTO = new CreateAccessDTO(accessData);
@@ -16,9 +17,9 @@ exports.create = async (accessData) => {
     }
 };
 
-exports.getAll = async (req) => {
+exports.getAll = async (query) => {
     const include = [];
-    const pagination = await DataBaseService.dataFilter(Access, req.query, include);
+    const pagination = await DataBaseService.dataFilter(Access, query, include);
     if (pagination.code != 200) {
         return pagination;
     }
@@ -30,9 +31,8 @@ exports.getAll = async (req) => {
         order: (pagination.orderBy && pagination.orderBy.length > 0) ? pagination.orderBy : [['id', 'DESC']],
         limit: pagination.limit ? parseInt(pagination.limit) : null
     });
-    
-    pagination.data = accesses.map(access => new AccessResponseDTO(access));
-    return pagination;
+	
+    return { data: accesses.map(access => new AccessResponseDTO(access)), pagination: new PaginationDTO(pagination) };
 };
 
 exports.getById = async (id) => {

@@ -1,25 +1,31 @@
 class CreateCategoryDTO {
-    constructor({ name, description }) {
-        this.name = name;
+    constructor({ title_menu, title, description, is_active }) {
+        this.title_menu = title_menu;
+        this.title = title;
         this.description = description;
+        this.is_active = is_active;
     }
 }
 
 class UpdateCategoryDTO {
-    constructor({ name, description }) {
-        this.name = name;
+    constructor({ title_menu, title, description, is_active }) {
+        this.title_menu = title_menu;
+        this.title = title;
         this.description = description;
+        this.is_active = is_active;
     }
 }
 
 class CategoryResponseDTO {
     constructor(category) {
         this.id = category.id;
-        this.name = category.name;
+        this.title_menu = category.title_menu;
+        this.title = category.title;
         this.description = category.description;
-        this.createdAt = category.createdAt;
-        this.updatedAt = category.updatedAt;
-        this.deletedAt = category.deletedAt;
+        this.is_active = category.is_active;
+        this.created_at = category.created_at;
+        this.updated_at = category.updated_at;
+        this.deleted_at = category.deleted_at;
     }
 }
 

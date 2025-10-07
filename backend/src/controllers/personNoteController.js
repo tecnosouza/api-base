@@ -13,7 +13,7 @@ exports.create = async (req, res, next) => {
 
 exports.getAll = async (req, res, next) => {
     try {
-        const personNotes = await personNoteService.getAll();
+        const personNotes = await personNoteService.getAll(req.query);
         successResponse(res, 'Lista de notas de pessoa retornada com sucesso.', personNotes);
     } catch (err) {
         next(err);

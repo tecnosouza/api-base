@@ -1,25 +1,34 @@
 class createRequestDTO {
-    constructor({ personId, phoneNumber, isMain }) {
-        this.personId = personId;
-        this.phoneNumber = phoneNumber;
-        this.isMain = isMain;
+    constructor({ person_id, ddi, ddd, number, default: isDefault }) {
+        this.person_id = person_id;
+        this.ddi = ddi;
+        this.ddd = ddd;
+        this.number = number;
+        this.default = isDefault;
     }
 }
 
 class updateRequestDTO {
-    constructor({ personId, phoneNumber, isMain }) {
-        if (personId !== undefined) this.personId = personId;
-        if (phoneNumber !== undefined) this.phoneNumber = phoneNumber;
-        if (isMain !== undefined) this.isMain = isMain;
+    constructor({ person_id, ddi, ddd, number, default: isDefault }) {
+        if (person_id !== undefined) this.person_id = person_id;
+        if (ddi !== undefined) this.ddi = ddi;
+        if (ddd !== undefined) this.ddd = ddd;
+        if (number !== undefined) this.number = number;
+        if (isDefault !== undefined) this.default = isDefault;
     }
 }
 
 class createResponseDTO {
     constructor(phone) {
         this.id = phone.id;
-        this.personId = phone.personId;
-        this.phoneNumber = phone.phoneNumber;
-        this.isMain = phone.isMain;
+        this.person_id = phone.person_id;
+        this.ddi = phone.ddi;
+        this.ddd = phone.ddd;
+        this.number = phone.number;
+        this.default = phone.default;
+        this.created_at = phone.created_at;
+        this.updated_at = phone.updated_at;
+        this.deleted_at = phone.deleted_at;
     }
 }
 

@@ -1,22 +1,28 @@
 class CreatePhoneNoteDTO {
-    constructor({ phoneId, note }) {
-        this.phoneId = phoneId;
-        this.note = note;
+    constructor({ logged_user_id, table_id, text }) {
+        this.logged_user_id = logged_user_id;
+        this.table_id = table_id;
+        this.text = text;
     }
 }
 
 class UpdatePhoneNoteDTO {
-    constructor({ phoneId, note }) {
-        this.phoneId = phoneId;
-        this.note = note;
+    constructor({ logged_user_id, table_id, text }) {
+        this.logged_user_id = logged_user_id;
+        this.table_id = table_id;
+        this.text = text;
     }
 }
 
 class PhoneNoteResponseDTO {
     constructor(phoneNote) {
         this.id = phoneNote.id;
-        this.phoneId = phoneNote.phoneId;
-        this.note = phoneNote.note;
+        this.logged_user_id = phoneNote.logged_user_id;
+        this.table_id = phoneNote.table_id;
+        this.text = phoneNote.text;
+        this.created_at = phoneNote.created_at;
+        this.updated_at = phoneNote.updated_at;
+        this.deleted_at = phoneNote.deleted_at;
     }
 }
 

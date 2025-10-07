@@ -21,14 +21,11 @@ class UpdateAccessDTO {
 class AccessResponseDTO {
     constructor(access) {
         this.id = access.id;
-        this.personId = access.personId;
-        this.accessLevelId = access.accessLevelId;
-        this.username = access.username;
-        this.lastLogin = access.lastLogin;
-        this.active = access.active;
-        this.createdAt = access.createdAt;
-        this.updatedAt = access.updatedAt;
-        this.deletedAt = access.deletedAt;
+        this.person_id = access.person_id;
+        this.crude = access.crude;
+        this.created_at = access.created_at;
+        this.updated_at = access.updated_at;
+        this.deleted_at = access.deleted_at;
     }
 }
 

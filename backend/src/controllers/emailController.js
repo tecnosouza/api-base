@@ -13,7 +13,7 @@ exports.create = async (req, res, next) => {
 
 exports.getAll = async (req, res, next) => {
     try {
-        const emails = await emailService.getAll();
+        const emails = await emailService.getAll(req.query);
         successResponse(res, 'Lista de emails retornada com sucesso.', emails);
     } catch (err) {
         next(err);

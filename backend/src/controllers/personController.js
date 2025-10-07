@@ -14,7 +14,7 @@ exports.create = async (req, res, next) => {
 
 exports.getAll = async (req, res, next) => {
     try {
-        const persons = await personService.getAll();
+        const persons = await personService.getAll(req.query);
         successResponse(res, 'Lista de pessoas retornada com sucesso.', persons);
     } catch (err) {
         next(err);
