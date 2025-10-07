@@ -1,5 +1,7 @@
+const DataBaseService = require('../database/services/DataBaseService');
 const { Category, sequelize } = require('@models/index.js');
 const { CreateCategoryDTO, UpdateCategoryDTO, CategoryResponseDTO } = require('@dtos/categoryDTO');
+const attributes = { exclude: ['createdAt', 'updatedAt', 'deleted_at'] };
 
 exports.create = async (categoryData) => {
     const createDTO = new CreateCategoryDTO(categoryData);
@@ -14,9 +16,23 @@ exports.create = async (categoryData) => {
     }
 };
 
-exports.getAll = async () => {
-    const categories = await Category.findAll();
-    return categories.map(category => new CategoryResponseDTO(category));
+exports.getAll = async (req) => {
+    const include = [];
+    const pagination = await DataBaseService.dataFilter(Category, req.query, include);
+    if (pagination.code != 200) {
+        return pagination;
+    }
+
+    const categories = await Category.findAll({
+        where: pagination.objWhere,
+        attributes: (pagination.attributes != undefined) ? pagination.attributes : attributes,
+        include: (pagination.include && pagination.include.length > 0) ? pagination.include : null,
+        order: (pagination.orderBy && pagination.orderBy.length > 0) ? pagination.orderBy : [['id', 'DESC']],
+        limit: pagination.limit ? parseInt(pagination.limit) : null
+    });
+    
+    pagination.data = categories.map(category => new CategoryResponseDTO(category));
+    return pagination;
 };
 
 exports.getById = async (id) => {

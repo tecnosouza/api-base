@@ -35,6 +35,12 @@ router.post('/category', createValidationCategory(), categoryController.create);
  *   get:
  *     summary: Retorna uma lista de categorias
  *     tags: [Categorias]
+ *     parameters:
+ *       - $ref: '#/components/parameters/PaginationParameters'
+ *       - $ref: '#/components/parameters/LimitParameters'
+ *       - $ref: '#/components/parameters/OrderByParameters'
+ *       - $ref: '#/components/parameters/FiltersParameters'
+ *       - $ref: '#/components/parameters/ColumnsParameters'
  *     responses:
  *       200:
  *         description: Lista de categorias retornada com sucesso.

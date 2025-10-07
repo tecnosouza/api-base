@@ -35,6 +35,12 @@ const router = express.Router();
 //  *   get:
 //  *     summary: Retorna uma lista de notas de email
 //  *     tags: [Notas de Email]
+//  *     parameters:
+//  *       - $ref: '#/components/parameters/PaginationParameters'
+//  *       - $ref: '#/components/parameters/LimitParameters'
+//  *       - $ref: '#/components/parameters/OrderByParameters'
+//  *       - $ref: '#/components/parameters/FiltersParameters'
+//  *       - $ref: '#/components/parameters/ColumnsParameters'
 //  *     responses:
 //  *       200:
 //  *         description: Lista de notas de email retornada com sucesso.

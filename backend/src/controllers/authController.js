@@ -14,7 +14,7 @@ exports.register = async (req, res, next) => {
 exports.login = async (req, res, next) => {
     const { username, password } = req.body;
     try {
-        const token = await authService.login(username, password);
+        const token = await authService.login({ username, password });
         successResponse(res, 'Login realizado com sucesso.', new AuthLoginResponseDTO(token.token, token.personData));
     } catch (err) {
         next(err);

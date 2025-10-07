@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { authenticate } = require('@middleware/authMiddleware');
 const accessController = require('@controllers/accessController');
 const { createValidationAccess } = require('@middleware/accessMiddleware');
 
@@ -28,20 +29,26 @@ const { createValidationAccess } = require('@middleware/accessMiddleware');
  *       400:
  *         description: Erro de registro
  */
-router.post('/access', createValidationAccess(), accessController.create);
+router.post('/access', authenticate, createValidationAccess(), accessController.create);
 /**
  * @swagger
  * /access:
  *   get:
  *     summary: Retorna uma lista de acessos
  *     tags: [Acessos]
+ *     parameters:
+ *       - $ref: '#/components/parameters/PaginationParameters'
+ *       - $ref: '#/components/parameters/LimitParameters'
+ *       - $ref: '#/components/parameters/OrderByParameters'
+ *       - $ref: '#/components/parameters/FiltersParameters'
+ *       - $ref: '#/components/parameters/ColumnsParameters'
  *     responses:
  *       200:
  *         description: Lista de acessos retornada com sucesso.
  *       500:
  *         description: Erro do servidor.
  */
-router.get('/access', accessController.getAll);
+router.get('/access', authenticate, accessController.getAll);
 
 /**
  * @swagger
@@ -66,7 +73,7 @@ router.get('/access', accessController.getAll);
  *       401:
  *         description: Não autorizado.
  */
-router.get('/access/:id', accessController.getById);
+router.get('/access/:id', authenticate, accessController.getById);
 
 /**
  * @swagger
@@ -99,7 +106,7 @@ router.get('/access/:id', accessController.getById);
  *       401:
  *         description: Não autorizado.
  */
-router.put('/access/:id', createValidationAccess(), accessController.update);
+router.put('/access/:id', authenticate, createValidationAccess(), accessController.update);
 
 /**
  * @swagger
@@ -124,6 +131,6 @@ router.put('/access/:id', createValidationAccess(), accessController.update);
  *       401:
  *         description: Não autorizado.
  */
-router.delete('/access/:id', accessController.delete);
+router.delete('/access/:id', authenticate, accessController.delete);
 
 module.exports = router;

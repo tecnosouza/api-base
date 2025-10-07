@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+
 const sharedRoutes = require('@routes/shared');
 const person = require('@routes/v1/personRoutes');
 const accessLevel = require('@routes/v1/accessLevelRoutes');

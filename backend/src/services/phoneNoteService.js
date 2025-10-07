@@ -1,3 +1,4 @@
+const DataBaseService = require('../database/services/DataBaseService');
 const AppError = require('@utils/appError');
 const ModelName = 'PhoneNote';
 const { PhoneNote, sequelize } = require('@models/index.js');
@@ -16,9 +17,23 @@ exports.create = async (phoneNoteData) => {
     }
 };
 
-exports.getAll = async () => {
-    const phoneNotes = await PhoneNote.findAll();
-    return phoneNotes.map(phoneNote => new PhoneNoteResponseDTO(phoneNote));
+exports.getAll = async (req) => {
+    const include = [];
+    const pagination = await DataBaseService.dataFilter(PhoneNote, req.query, include);
+    if (pagination.code != 200) {
+        return pagination;
+    }
+
+    const phoneNotes = await PhoneNote.findAll({
+        where: pagination.objWhere,
+        attributes: (pagination.attributes != undefined) ? pagination.attributes : null,
+        include: (pagination.include && pagination.include.length > 0) ? pagination.include : null,
+        order: (pagination.orderBy && pagination.orderBy.length > 0) ? pagination.orderBy : [['id', 'DESC']],
+        limit: pagination.limit ? parseInt(pagination.limit) : null
+    });
+    
+    pagination.data = phoneNotes.map(phoneNote => new PhoneNoteResponseDTO(phoneNote));
+    return pagination;
 };
 
 exports.getById = async (id) => {

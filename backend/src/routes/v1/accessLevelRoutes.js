@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { authenticate } = require('@middleware/authMiddleware');
 const accessLevelController = require('@controllers/accessLevelController');
 const { createValidationAccessLevel } = require('@middleware/accessLevelMiddleware');
 
@@ -28,20 +29,26 @@ const { createValidationAccessLevel } = require('@middleware/accessLevelMiddlewa
  *       400:
  *         description: Erro de registro
  */
-router.post('/accessLevel', createValidationAccessLevel(), accessLevelController.create);
+router.post('/accessLevel', authenticate, createValidationAccessLevel(), accessLevelController.create);
 /**
  * @swagger
  * /accessLevel:
  *   get:
  *     summary: Retorna uma lista de níveis de acesso
  *     tags: [Níveis de Acesso]
+ *     parameters:
+ *       - $ref: '#/components/parameters/PaginationParameters'
+ *       - $ref: '#/components/parameters/LimitParameters'
+ *       - $ref: '#/components/parameters/OrderByParameters'
+ *       - $ref: '#/components/parameters/FiltersParameters'
+ *       - $ref: '#/components/parameters/ColumnsParameters'
  *     responses:
  *       200:
  *         description: Lista de níveis de acesso retornada com sucesso.
  *       500:
  *         description: Erro do servidor.
  */
-router.get('/accessLevel', accessLevelController.getAll);
+router.get('/accessLevel', authenticate, accessLevelController.getAll);
 
 /**
  * @swagger
@@ -64,7 +71,7 @@ router.get('/accessLevel', accessLevelController.getAll);
  *       500:
  *         description: Erro do servidor.
  */
-router.get('/accessLevel/:id', accessLevelController.getById);
+router.get('/accessLevel/:id', authenticate, accessLevelController.getById);
 
 /**
  * @swagger
@@ -95,7 +102,7 @@ router.get('/accessLevel/:id', accessLevelController.getById);
  *       500:
  *         description: Erro do servidor.
  */
-router.put('/accessLevel/:id', createValidationAccessLevel(), accessLevelController.update);
+router.put('/accessLevel/:id', authenticate, createValidationAccessLevel(), accessLevelController.update);
 
 /**
  * @swagger
@@ -118,6 +125,6 @@ router.put('/accessLevel/:id', createValidationAccessLevel(), accessLevelControl
  *       500:
  *         description: Erro do servidor.
  */
-router.delete('/accessLevel/:id', accessLevelController.delete);
+router.delete('/accessLevel/:id', authenticate, accessLevelController.delete);
 
 module.exports = router;

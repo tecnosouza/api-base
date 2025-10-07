@@ -1,3 +1,4 @@
+const DataBaseService = require('../database/services/DataBaseService');
 const { Product, sequelize } = require('@models/index.js');
 const AppError = require('@utils/appError');
 const ModelName = 'productService';
@@ -43,9 +44,23 @@ exports.create = async (productData) => {
     }
 };
 
-exports.getAll = async () => {
-    const products = await Product.findAll();
-    return products;
+exports.getAll = async (req) => {
+    const include = [];
+    const pagination = await DataBaseService.dataFilter(Product, req.query, include);
+    if (pagination.code != 200) {
+        return pagination;
+    }
+
+    const products = await Product.findAll({
+        where: pagination.objWhere,
+        attributes: (pagination.attributes != undefined) ? pagination.attributes : null,
+        include: (pagination.include && pagination.include.length > 0) ? pagination.include : null,
+        order: (pagination.orderBy && pagination.orderBy.length > 0) ? pagination.orderBy : [['id', 'DESC']],
+        limit: pagination.limit ? parseInt(pagination.limit) : null
+    });
+    
+    pagination.data = products;
+    return pagination;
 };
 
 exports.getById = async (id) => {

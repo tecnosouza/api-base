@@ -5,12 +5,14 @@ module.exports = {
             id: {
                 type: DataTypes.INTEGER,
                 primaryKey: true,
-                autoIncrement: true,
                 allowNull: false
             },
-            user_id: {
+            person_id: {
                 type: DataTypes.INTEGER,
-                allowNull: true
+                allowNull: false,
+                references: { model: 'persons', key: 'id' },
+                onUpdate: 'CASCADE',
+                onDelete: 'CASCADE',
             },
             level: {
                 type: DataTypes.ENUM('INFO', 'WARN', 'ERROR', 'FATAL'),
@@ -38,11 +40,11 @@ module.exports = {
                 allowNull: true,
             },
             request_headers: {
-                type: DataTypes.JSON,
+                type: DataTypes.TEXT,
                 allowNull: true,
             },
             request_body: {
-                type: DataTypes.JSON,
+                type: DataTypes.TEXT,
                 allowNull: true,
             },
             status_code: {
@@ -65,6 +67,18 @@ module.exports = {
                 allowNull: true,
                 defaultValue: null,
             },
+        }, {
+            indexes: [
+                {
+                    fields: ['person_id'],
+                },
+                {
+                    fields: ['level'],
+                },
+                {
+                    fields: ['request_url'],
+                }
+            ],
         });
     },
 

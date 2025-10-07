@@ -1,7 +1,7 @@
+const DataBaseService = require('../database/services/DataBaseService');
 const { EmailNote, sequelize } = require('@models/index.js');
-
 const { CreateEmailNoteDTO, UpdateEmailNoteDTO, EmailNoteResponseDTO } = require('@dtos/emailNoteDTO');
-
+const attributes = { exclude: ['createdAt', 'updatedAt', 'deleted_at'] };
 
 exports.create = async (emailNoteData) => {
     const createDTO = new CreateEmailNoteDTO(emailNoteData);
@@ -16,9 +16,23 @@ exports.create = async (emailNoteData) => {
     }
 };
 
-exports.getAll = async () => {
-    const emailNotes = await EmailNote.findAll();
-    return emailNotes.map(emailNote => new EmailNoteResponseDTO(emailNote));
+exports.getAll = async (req) => {
+    const include = [];
+    const pagination = await DataBaseService.dataFilter(EmailNote, req.query, include);
+    if (pagination.code != 200) {
+        return pagination;
+    }
+
+    const emailNotes = await EmailNote.findAll({
+        where: pagination.objWhere,
+        attributes: (pagination.attributes != undefined) ? pagination.attributes : attributes,
+        include: (pagination.include && pagination.include.length > 0) ? pagination.include : null,
+        order: (pagination.orderBy && pagination.orderBy.length > 0) ? pagination.orderBy : [['id', 'DESC']],
+        limit: pagination.limit ? parseInt(pagination.limit) : null
+    });
+    
+    pagination.data = emailNotes.map(emailNote => new EmailNoteResponseDTO(emailNote));
+    return pagination;
 };
 
 exports.getById = async (id) => {

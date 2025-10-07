@@ -48,6 +48,12 @@ router.post('/product', upload.single('image'), createValidationProduct(), produ
  *   get:
  *     summary: Retorna uma lista de produtos
  *     tags: [Produtos]
+ *     parameters:
+ *       - $ref: '#/components/parameters/PaginationParameters'
+ *       - $ref: '#/components/parameters/LimitParameters'
+ *       - $ref: '#/components/parameters/OrderByParameters'
+ *       - $ref: '#/components/parameters/FiltersParameters'
+ *       - $ref: '#/components/parameters/ColumnsParameters'
  *     responses:
  *       200:
  *         description: Lista de produtos retornada com sucesso.

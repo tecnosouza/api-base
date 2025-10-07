@@ -1,185 +1,217 @@
+/* eslint-disable indent */
+/* eslint-disable no-fallthrough */
+/* eslint-disable no-undef */
 const { Op } = require('sequelize');
 const moment = require('moment-timezone');
-const { removeAccentsAndLowerCase } = require('@helpers/StringHelper');
+const { removeAccentsAndLowerCase } = require('../../helpers/StringHelper');
 
-class DataBaseService {
-    constructor(model) {
-        this.model = model;
-    }
+module.exports = {
 
-    async dataFilter(model, query, include) {
-        let { page = 1, // Receber o numero da pagina
-            orderBy, // Tipo de ordenação da pagina
-            limit = 10, // Limit de registros da pagina por chamada
-            filters = null, // Filtros adicionais
-            columns = null, // Solicitação de colunas especificas
-            groupBy = false, // groupBy
-            addIncludes = 'true', // addIncludes
-        } = query;
+	async dataFilter(model, query, include) {        
 
-        /**
-     * Validação page
-     */
-        page = (page < 1) ? 1 : page;
+		let {
+			page = 1, // Receber o numero da pagina
+			orderBy,  // Tipo de ordenação da pagina
+			limit = 50, // Limit de registros da pagina por chamada
+			filters = null, // Filtros adicionais
+			columns = null, // Solicitação de colunas especificas
+			groupBy = false, // groupBy
+			addIncludes = 'true', // addIncludes
+		} = query;
 
-        /**
-     * Montagem do LIMIT dinamicamente
-     */
-        if (limit > 50) {
-            limit = 50;
-        }
+		/**
+		 * Validação page
+		 */
+		page = (page < 1) ? 1 : page;
 
-        /**
-     * Montagem do WHERE dinamicamente
-     */
-        const objWhereDynamic = {};
-        const objWhereDynamicOthers = {};
+		/**
+		 * Montagem do LIMIT dinamicamente
+		 */
+		if (limit > 50) {
+			limit = 50;
+		}
 
-        // Percorre os paramentros para adicionar nos fltros
-        if (filters != null) {
-            filters = JSON.parse(filters);
-            filters.forEach((filter) => {
-                if (filter.value != null && filter.value != undefined && typeof filter.value == 'string') {
-                    filter.value = filter.value.trim();
-                }
+		/**
+		 * Montagem do WHERE dinamicamente
+		 */
+		let objWhereDynamic = {};
+		let objWhereDynamicOthers = {};
 
-                // Verifica é necessário que sejam retornados todos os dados cadastrados, removendo o limit
-                if (filter?.property?.toLowerCase() === 'infinitylimit') {
-                    limit = null;
-                } else if (filter?.operator?.toLowerCase() === 'contains') { // contém
-                    objWhereDynamic[filter.column] = {
-                        [Op.iLike]: `%${removeAccentsAndLowerCase(filter.value)}%`,
-                    };
-                } else if (filter?.operator?.toLowerCase() === 'notContains') { // não contém
-                    objWhereDynamic[filter.column] = {
-                        [Op.notILike]: `%${removeAccentsAndLowerCase(filter.value)}%`,
-                    };
-                } else if (filter?.operator?.toLowerCase() === 'startsWith') { // começa com
-                    objWhereDynamic[filter.column] = {
-                        [Op.iLike]: `${removeAccentsAndLowerCase(filter.value)}%`,
-                    };
-                } else if (filter?.operator?.toLowerCase() === 'endsWith') { // termina com
-                    objWhereDynamic[filter.column] = {
-                        [Op.iLike]: `%${removeAccentsAndLowerCase(filter.value)}`,
-                    };
-                } else if (filter?.operator?.toLowerCase() === 'equals') { // igual
-                    objWhereDynamic[filter.column] = {
-                        [Op.eq]: filter.value,
-                    };
-                } else if (filter?.operator?.toLowerCase() === 'notEquals') { // diferente
-                    objWhereDynamic[filter.column] = {
-                        [Op.ne]: filter.value,
-                    };
-                } else if (filter?.operator?.toLowerCase() === 'between') { // entre (apenas para data)
-                    const [date1, date2] = filter.value.split(',');
+		// Adiciona o where principal para todas as consultas padroes
+		objWhereDynamic['deleted_at'] = null;
 
-                    const date1ISO = moment(date1).tz('America/Sao_Paulo').format('YYYY-MM-DDTHH:mm:ss.SSSZ');
-                    const date2ISO = moment(date2).tz('America/Sao_Paulo').endOf('day').format('YYYY-MM-DDTHH:mm:ss.SSSZ');
+		switch (model.name.toString()) {
+			case 'FinancialCategories':
+				objWhereDynamic['systematic'] = false; // Removendo as categorias sistemáticas
+			case 'Persons':
+				objWhereDynamic['id'] = { [Op.notIn]: [1, 2] }; // Removendo da exibição os usuarios Henrique e Thomas
+				break;
+		}
 
-                    if (date1ISO != null && date2ISO != null) {
-                        objWhereDynamic[filter.column] = {
-                            [Op.between]: [date1ISO, date2ISO],
-                        };
-                    }
-                } else if (filter.column.includes('.')) {
-                    objWhereDynamicOthers[filter.column] = filter.value;
-                } else {
-                    objWhereDynamic[filter.column] = filter.value;
-                }
-            });
-        }
+		// Percorre os paramentros para adicionar nos fltros
+		if (filters != null) {
+			filters = JSON.parse(filters);
+			filters.forEach((filter) => {
 
-        const modifiedInclude = [];
-        const bAddIncludes = !!(addIncludes === 'true');
-        if (include && bAddIncludes) {
-            if (Object.keys(objWhereDynamicOthers).length > 0) {
-                for (const [field, value] of Object.entries(objWhereDynamicOthers)) {
-                    const dotIndex = field.indexOf('.');
-                    const associationName = dotIndex !== -1 ? field.substring(0, dotIndex) : field;
+				if (filter.value != null && filter.value != undefined && typeof filter.value == 'string') {
+					filter.value = filter.value.trim();
+				}
 
-                    include.forEach((inc) => {
-                        if (inc.association === associationName) {
-                            inc.where = { [field.substring(dotIndex + 1)]: value };
-                            modifiedInclude.push(inc);
-                        } else {
-                            modifiedInclude.push(inc);
-                        }
-                    });
-                }
-            } else {
-                include.forEach((inc) => {
-                    modifiedInclude.push(inc);
-                });
-            }
-        }
+				// Verifica é necessário que sejam retornados todos os dados cadastrados, removendo o limit
+				if (filter?.property?.toLowerCase() === 'infinitylimit') {
+					limit = null;
+				} else if (filter?.operator?.toLowerCase() === 'like') {
+					objWhereDynamic[filter.property] = {
+						[Op.iLike]: `%${removeAccentsAndLowerCase(filter.value)}%`
+					};
+				} else if (filter?.operator?.toLowerCase() === 'notin') {
+					objWhereDynamic[filter.property] = {
+						[Op.notIn]: filter.value
+					};
+				} else if (filter?.operator?.toLowerCase() === 'between') {
+					const [date1, date2] = filter.value.split(',');
 
-        /**
-     * Montagem do orderBy dinamicamente
-     * [{"field": "imei","type": "ASC"}]
-     */
-        const aOrderBy = [];
-        if (orderBy != null && orderBy != undefined && orderBy != 'undefined' && orderBy.length > 0) {
-            const jOrderByJSON = JSON?.parse(orderBy);
+					let date1ISO = moment(date1).tz('America/Sao_Paulo').format('YYYY-MM-DDTHH:mm:ss.SSSZ');
+					let date2ISO = moment(date2).tz('America/Sao_Paulo').endOf('day').format('YYYY-MM-DDTHH:mm:ss.SSSZ');
 
-            jOrderByJSON.forEach((objeto) => {
-                aOrderBy.push([objeto.field, objeto.type]);
-            });
-        }
+					if (date1ISO != null && date2ISO != null) {
+						objWhereDynamic[filter.property] = {
+							[Op.between]: [date1ISO, date2ISO]
+						};
+					}
+				} else {
+					if (!filter.property.includes('.')) {
+						objWhereDynamic[filter.property] = filter.value;
+					} else {
+						objWhereDynamicOthers[filter.property] = filter.value;
+					}
+				}
+			});
+		}
 
-        /**
-     * Montagem das COLUNAS
-     */
-        let attributes = null;
-        if (columns != null) {
-            const aAttributes = [];
-            columns.split(',').forEach((column) => {
-                aAttributes.push(column);
-            });
+		let modifiedInclude = [];
+		let bAddIncludes = !!(addIncludes === 'true');
+		if (include && bAddIncludes) {
+			if (objWhereDynamicOthers.length > 0) {
+				for (const [field, value] of Object.entries(objWhereDynamicOthers)) {
+					let dotIndex = field.indexOf('.');
+					let associationName = dotIndex !== -1 ? field.substring(0, dotIndex) : field;
 
-            if (aAttributes.length > 0) {
-                attributes = aAttributes;
-            }
-        }
+					include.forEach((inc) => {
+						if (inc.association === associationName) {
+							inc.where = { type: value };
+							modifiedInclude.push(inc);
+						} else {
+							modifiedInclude.push(inc);
+						}
+					});
+				}
+			} else {
+				include.forEach((inc) => {
+					modifiedInclude.push(inc);
+				});
+			}
+		}
 
-        // variavel com o numero da ultima pagina
-        let lastPage = 1;
+		/**
+		 * Montagem do orderBy dinamicamente
+		 * [{"field": "imei","type": "ASC"}]
+		 */
+		let aOrderBy = new Array();
+		if (orderBy != null && orderBy != undefined && orderBy != 'undefined' && orderBy.length > 0) {
+			const jOrderByJSON = JSON?.parse(orderBy);
 
-        const countOptions = {};
+			jOrderByJSON.forEach(objeto => {
+				aOrderBy.push([objeto.field, objeto.type]);
+			});
+		}
 
-        // Verifica se objWhereDynamic está definido e não é nulo
-        if (objWhereDynamic) {
-            countOptions.where = objWhereDynamic;
-        }
+		/**
+		 * Montagem das COLUNAS
+		 */
+		let attributes = null;
+		if (columns != null) {
+			let aAttributes = [];
+			columns.split(',').forEach(function (column) {
+				aAttributes.push(column);
+			});
 
-        // Contar a quantidade de paginas
-        const countModel = await model.count(countOptions);
+			if (aAttributes.length > 0) {
+				attributes = aAttributes;
+			}
+		}
 
-        // Caso não encontre registos
-        if (countModel == 0) {
-            return { code: '204', message: 'Dados não encontrados!' };
-        }
+		// variavel com o numero da ultima pagina
+		let lastPage = 1;
 
-        lastPage = limit === null ? 1 : Math.ceil(countModel / limit);
+		const countOptions = {};
 
-        const offset = Number((page * limit) - limit);
+		// Verifica se objWhereDynamic está definido e não é nulo
+		if (objWhereDynamic) {
+			countOptions.where = objWhereDynamic;
+		}
 
-        const pagination = {
-            attributes,
-            include: modifiedInclude,
-            objWhere: objWhereDynamic,
-            orderBy: aOrderBy,
-            groupBy,
-            offset,
-            limit,
-            current_page: page,
-            last_page: lastPage,
-            total: countModel,
-            code: '200',
-            message: 'sucesso',
-        };
+		// Verifica se include está definido e não é nulo
+		if (include) {
+			switch (model.name.toString().toLowerCase()) {
+				case 'orders':
+					countOptions.include = null;
+					break;
+				default:
+					countOptions.include = include;
+					break;
+			}
+		}
 
-        return pagination;
-    }
-}
+		//Contar a quantidade de paginas
+		const countModel = await model.count(countOptions);
 
-module.exports = DataBaseService;
+		// Caso não encontre registos
+		if (countModel == 0) {
+			return { code: '204', message: __('DATA_NOT_FOUND') };
+		}
+
+		lastPage = Math.ceil(countModel / limit);
+
+		// -------------------------------------
+		// NOVO: cursor interno ao invés de offset
+		// -------------------------------------
+		let cursorId = null;
+
+		if (page > 1) {
+			const row = await model.findOne({
+				where: objWhereDynamic,
+				attributes: ['id'],
+				order: (orderBy && Array.isArray(orderBy) && orderBy.length > 0) ? orderBy : [['id', 'DESC']],
+				offset: (page - 1) * limit,
+			});
+
+			cursorId = row ? row.id : null;
+		}
+
+		// Ajusta o where para usar cursor em vez de offset
+		let objWhereForQuery = { ...objWhereDynamic };
+		if (cursorId) {
+			objWhereForQuery.id = { [Op.lte]: cursorId }; // DESC → id menor ou igual
+		}
+
+		let pagination = {
+			attributes: attributes,
+			include: modifiedInclude,
+			objWhere: objWhereForQuery,
+			orderBy: aOrderBy,
+			groupBy,
+			limit,
+			page,
+			prev_page_url: ((page - 1) >= 1) ? (page - 1) : null,
+			next_page_url: Number(page) + Number(1) > lastPage ? null : Number(page) + Number(1),
+			last_page: lastPage,
+			total: countModel,
+			code: '200',
+			message: __('SUCCESS')
+		};
+
+		return pagination;
+	}
+
+};

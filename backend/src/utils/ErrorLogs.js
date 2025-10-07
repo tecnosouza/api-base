@@ -12,13 +12,13 @@ async function errorLogs({
     try {
         await ErrorLog.create({
             message,
+            person_id: userId || null,
             stack_trace: stack,
             source_model: sourceModel,
             request_url: req?.originalUrl || null,
             request_method: req?.method || null,
             request_headers: req?.headers || null,
             request_body: req?.body || null,
-            user_id: userId || null,
             status_code: statusCode,
             level,
         });

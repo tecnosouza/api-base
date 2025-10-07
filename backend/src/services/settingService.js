@@ -1,6 +1,8 @@
-const { Setting, sequelize } = require('@models/index.js');
+const DataBaseService = require('../database/services/DataBaseService');
 const AppError = require('@utils/appError');
 const ModelName = 'settingService';
+const { Setting, sequelize } = require('@models/index.js');
+const attributes = { exclude: ['createdAt', 'updatedAt', 'deleted_at'] };
 
 exports.create = async (settingData) => {
     const transaction = await sequelize.transaction();
@@ -38,9 +40,23 @@ exports.create = async (settingData) => {
     }
 };
 
-exports.getAll = async () => {
-    const settings = await Setting.findAll();
-    return settings;
+exports.getAll = async (req) => {
+    const include = [];
+    const pagination = await DataBaseService.dataFilter(Setting, req.query, include);
+    if (pagination.code != 200) {
+        return pagination;
+    }
+
+    const settings = await Setting.findAll({
+        where: pagination.objWhere,
+        attributes: (pagination.attributes != undefined) ? pagination.attributes : attributes,
+        include: (pagination.include && pagination.include.length > 0) ? pagination.include : null,
+        order: (pagination.orderBy && pagination.orderBy.length > 0) ? pagination.orderBy : [['id', 'DESC']],
+        limit: pagination.limit ? parseInt(pagination.limit) : null
+    });
+    
+    pagination.data = settings;
+    return pagination;
 };
 
 exports.getById = async (id) => {

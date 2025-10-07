@@ -1,7 +1,8 @@
+require('module-alias/register');
+
 const loadEnv = require('./config/env');
 loadEnv();
 
-require('module-alias/register');
 const cors = require('cors');
 const express = require('express');
 const { sequelize } = require('@models/index');
@@ -39,6 +40,18 @@ app.use((req, res, next) => {
     res.setTimeout(15000);
     next();
 });
+
+/**
+ * Configurações I18n
+*/
+const { I18n } = require('i18n');
+const i18n = new I18n({
+    locales: ['pt-BR', 'en'],
+    directory: path.join(__dirname, 'translations'),
+    defaultLocale: 'pt-BR',
+    register: global
+});
+app.use(i18n.init);
 
 // Swagger
 app.use('/api-docs', (req, res, next) => {

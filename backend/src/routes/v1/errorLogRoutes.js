@@ -35,6 +35,12 @@ const router = express.Router();
 //  *   get:
 //  *     summary: Retorna uma lista de logs de erro
 //  *     tags: [Logs de Erro]
+//  *     parameters:
+//  *       - $ref: '#/components/parameters/PaginationParameters'
+//  *       - $ref: '#/components/parameters/LimitParameters'
+//  *       - $ref: '#/components/parameters/OrderByParameters'
+//  *       - $ref: '#/components/parameters/FiltersParameters'
+//  *       - $ref: '#/components/parameters/ColumnsParameters'
 //  *     responses:
 //  *       200:
 //  *         description: Lista de logs de erro retornada com sucesso.

@@ -1,8 +1,10 @@
 const { Person, sequelize } = require('@models/index.js');
+const DataBaseService = require('../database/services/DataBaseService');
 const bcrypt = require('bcryptjs');
 const { CreatePersonDTO, UpdatePersonDTO, PersonResponseDTO } = require('@dtos/personDTO');
 const AppError = require('@utils/appError');
 const ModelName = 'personService';
+const attributes = { exclude: ['createdAt', 'updatedAt', 'deleted_at'] };
 
 exports.create = async (personData) => {
     const createDTO = new CreatePersonDTO(personData);
@@ -48,9 +50,23 @@ exports.create = async (personData) => {
     }
 };
 
-exports.getAll = async () => {
-    const persons = await Person.findAll();
-    return persons.map(person => new PersonResponseDTO(person));
+exports.getAll = async (req) => {
+    const include = [];
+    const pagination = await DataBaseService.dataFilter(Person, req.query, include);
+    if (pagination.code != 200) {
+        return pagination;
+    }
+
+    const persons = await Person.findAll({
+        where: pagination.objWhere,
+        attributes: (pagination.attributes != undefined) ? pagination.attributes : attributes,
+        include: (pagination.include && pagination.include.length > 0) ? pagination.include : null,
+        order: (pagination.orderBy && pagination.orderBy.length > 0) ? pagination.orderBy : [['id', 'DESC']],
+        limit: pagination.limit ? parseInt(pagination.limit) : null
+    });
+    
+    pagination.data = persons.map(person => new PersonResponseDTO(person));
+    return pagination;
 };
 
 exports.getById = async (id) => {

@@ -35,6 +35,12 @@ const router = express.Router();
 //  *   get:
 //  *     summary: Retorna uma lista de telefones
 //  *     tags: [Telefones]
+//  *     parameters:
+//  *       - $ref: '#/components/parameters/PaginationParameters'
+//  *       - $ref: '#/components/parameters/LimitParameters'
+//  *       - $ref: '#/components/parameters/OrderByParameters'
+//  *       - $ref: '#/components/parameters/FiltersParameters'
+//  *       - $ref: '#/components/parameters/ColumnsParameters'
 //  *     responses:
 //  *       200:
 //  *         description: Lista de telefones retornada com sucesso.

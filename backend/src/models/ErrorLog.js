@@ -4,9 +4,14 @@
 module.exports = (sequelize, DataTypes) => {
     const ErrorLog = sequelize.define('ErrorLog', {
         id: {
-            type: DataTypes.UUID,
-            defaultValue: DataTypes.UUIDV4,
+            type: DataTypes.INTEGER,
             primaryKey: true,
+            autoIncrement: true,
+            allowNull: false,
+        },
+        person_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
         },
         level: {
             type: DataTypes.ENUM('INFO', 'WARN', 'ERROR', 'FATAL'),
@@ -69,10 +74,6 @@ module.exports = (sequelize, DataTypes) => {
         createdAt: 'created_at',
         updatedAt: 'updated_at',
     });
-
-    // eslint-disable-next-line no-unused-vars
-    ErrorLog.associate = (models) => {
-    };
 
     return ErrorLog;
 };

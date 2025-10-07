@@ -10,13 +10,12 @@ const AppError = require('@utils/appError');
 async function errorHandler(err, req, res, next) {
     const isAppError = err instanceof AppError;
 
-    var saveDb = err.saveDB?? true;
     const statusCode = isAppError ? err.statusCode : 500;
     const messageForUser = isAppError ? err.messageForUser : 'Erro interno do servidor';
     const messageForDB = isAppError ? err.messageForDB : err.message || 'Erro desconhecido';
 
     try {
-        if (!isAppError || saveDb) {
+        if (!isAppError || err.saveDB !== false) {
             await logError({
                 message: messageForDB,
                 stack: err.stack,
@@ -26,14 +25,20 @@ async function errorHandler(err, req, res, next) {
                 sourceModel: isAppError ? err.source_model : 'Unknown',
                 level: statusCode >= 500 ? 'FATAL' : 'ERROR',
             });
-        }
 
+            console.error('❌=====================================================================================❌');
+            console.error('ERRO: ', statusCode >= 500 ? 'FATAL' : 'ERROR');
+            console.error('statusCode: ', statusCode);
+            console.error('Mensagem: ', messageForDB);
+            console.error('trace: ', err.stack);
+            console.error('❌=====================================================================================❌');
+        }
     } catch (dbErr) {
         console.error('❌ Falha ao salvar log no banco:', dbErr);
     }
 
     try {
-        if (saveDb && process.env.SEND_ERROR_EMAIL === 'true' && process.env.SEND_ERROR_EMAIL_TO) {
+        if (err.saveDB && process.env.SEND_ERROR_EMAIL === 'true' && process.env.SEND_ERROR_EMAIL_TO) {
             const recipients = process.env.SEND_ERROR_EMAIL_TO.split(',');
             const errorSubject = `Erro na Aplicação: ${messageForUser}`;
             const errorHtml = `

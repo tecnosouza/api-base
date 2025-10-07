@@ -1,6 +1,8 @@
-const { ErrorLog, sequelize } = require('@models/index.js');
+const DataBaseService = require('../database/services/DataBaseService');
 const AppError = require('@utils/appError');
+const { ErrorLog, sequelize } = require('@models/index.js');
 const { CreateErrorLogDTO, UpdateErrorLogDTO, ErrorLogResponseDTO } = require('@dtos/errorLogDTO');
+const attributes = { exclude: ['createdAt', 'updatedAt', 'deleted_at'] };
 
 exports.create = async (errorLogData) => {
     const createDTO = new CreateErrorLogDTO(errorLogData);
@@ -15,9 +17,23 @@ exports.create = async (errorLogData) => {
     }
 };
 
-exports.getAll = async () => {
-    const errorLogs = await ErrorLog.findAll();
-    return errorLogs.map(errorLog => new ErrorLogResponseDTO(errorLog));
+exports.getAll = async (req) => {
+    const include = [];
+    const pagination = await DataBaseService.dataFilter(ErrorLog, req.query, include);
+    if (pagination.code != 200) {
+        return pagination;
+    }
+
+    const errorLogs = await ErrorLog.findAll({
+        where: pagination.objWhere,
+        attributes: (pagination.attributes != undefined) ? pagination.attributes : attributes,
+        include: (pagination.include && pagination.include.length > 0) ? pagination.include : null,
+        order: (pagination.orderBy && pagination.orderBy.length > 0) ? pagination.orderBy : [['id', 'DESC']],
+        limit: pagination.limit ? parseInt(pagination.limit) : null
+    });
+    
+    pagination.data = errorLogs.map(errorLog => new ErrorLogResponseDTO(errorLog));
+    return pagination;
 };
 
 exports.getById = async (id) => {

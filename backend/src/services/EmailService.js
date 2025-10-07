@@ -1,6 +1,8 @@
-const { Email, sequelize } = require('@models/index.js');
+const DataBaseService = require('../database/services/DataBaseService');
 const AppError = require('@utils/appError');
+const { Email, sequelize } = require('@models/index.js');
 const { CreateEmailDTO, UpdateEmailDTO, EmailResponseDTO } = require('@dtos/emailDTO');
+const attributes = { exclude: ['createdAt', 'updatedAt', 'deleted_at'] };
 
 exports.create = async (emailData) => {
     const createDTO = new CreateEmailDTO(emailData);
@@ -15,9 +17,23 @@ exports.create = async (emailData) => {
     }
 };
 
-exports.getAll = async () => {
-    const emails = await Email.findAll();
-    return emails.map(email => new EmailResponseDTO(email));
+exports.getAll = async (req) => {
+    const include = [];
+    const pagination = await DataBaseService.dataFilter(Email, req.query, include);
+    if (pagination.code != 200) {
+        return pagination;
+    }
+
+    const emails = await Email.findAll({
+        where: pagination.objWhere,
+        attributes: (pagination.attributes != undefined) ? pagination.attributes : attributes,
+        include: (pagination.include && pagination.include.length > 0) ? pagination.include : null,
+        order: (pagination.orderBy && pagination.orderBy.length > 0) ? pagination.orderBy : [['id', 'DESC']],
+        limit: pagination.limit ? parseInt(pagination.limit) : null
+    });
+    
+    pagination.data = emails.map(email => new EmailResponseDTO(email));
+    return pagination;
 };
 
 exports.getById = async (id) => {
@@ -62,4 +78,3 @@ exports.delete = async (id) => {
         throw error;
     }
 };
-

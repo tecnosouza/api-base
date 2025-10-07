@@ -13,7 +13,7 @@ exports.create = async (req, res, next) => {
 
 exports.getAll = async (req, res, next) => {
     try {
-        const accessLevels = await accessLevelService.getAll();
+        const accessLevels = await accessLevelService.getAll(req);
         successResponse(res, 'Lista de níveis de acesso retornada com sucesso.', accessLevels);
     } catch (err) {
         next(err);

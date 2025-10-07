@@ -35,6 +35,12 @@ router.post('/person', createValidationPerson(), personController.create);
  *   get:
  *     summary: Retorna uma lista de usuários
  *     tags: [Usuários]
+ *     parameters:
+ *       - $ref: '#/components/parameters/PaginationParameters'
+ *       - $ref: '#/components/parameters/LimitParameters'
+ *       - $ref: '#/components/parameters/OrderByParameters'
+ *       - $ref: '#/components/parameters/FiltersParameters'
+ *       - $ref: '#/components/parameters/ColumnsParameters'
  *     responses:
  *       200:
  *         description: Lista de usuários retornado com sucesso.
