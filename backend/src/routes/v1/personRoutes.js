@@ -30,6 +30,7 @@ const { createValidationPerson } = require('@middleware/personMiddleware');
  *         description: Erro de registro
  */
 router.post('/person', authenticate, createValidationPerson(), personController.create);
+
 /**
  * @swagger
  * /person:
@@ -49,6 +50,22 @@ router.post('/person', authenticate, createValidationPerson(), personController.
  *         description: Erro do servidor.
  */
 router.get('/person', authenticate, personController.getAll);
+
+/**
+ * @swagger
+ * /person/me:
+ *   get:
+ *     summary: Retorna um usuários pelo token de autenticação.
+ *     tags: [Usuários]
+ *     responses:
+ *       200:
+ *         description: Usuário retornado com sucesso.
+ *       404:
+ *         description: Usuário não encontrado.
+ *       500:
+ *         description: Erro do servidor.
+ */
+router.get('/person/me', authenticate, personController.getById);
 
 /**
  * @swagger

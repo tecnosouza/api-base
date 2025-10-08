@@ -42,5 +42,5 @@ exports.login = async (loginData) => {
         expiresIn: process.env.JWT_EXPIRES_IN,
     });
 
-    return { data: new AuthLoginResponseDTO(token) };
+    return new AuthLoginResponseDTO(token);
 };

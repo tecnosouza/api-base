@@ -14,7 +14,7 @@ exports.create = async (req, res, next) => {
 exports.getAll = async (req, res, next) => {
     try {
         const errorLogs = await errorLogService.getAll(req.query);
-        successResponse(res, 'Lista de logs de erro retornada com sucesso.', errorLogs);
+        successResponse(res, 'Lista de logs de erro retornada com sucesso.', errorLogs.data, errorLogs.pagination);
     } catch (err) {
         next(err);
     }

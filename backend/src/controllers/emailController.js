@@ -14,7 +14,7 @@ exports.create = async (req, res, next) => {
 exports.getAll = async (req, res, next) => {
     try {
         const emails = await emailService.getAll(req.query);
-        successResponse(res, 'Lista de emails retornada com sucesso.', emails);
+        successResponse(res, 'Lista de emails retornada com sucesso.', emails.data, emails.pagination);
     } catch (err) {
         next(err);
     }

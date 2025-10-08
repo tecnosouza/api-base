@@ -14,7 +14,7 @@ exports.create = async (req, res, next) => {
 exports.getAll = async (req, res, next) => {
     try {
         const addresses = await addressService.getAll(req.query);
-        successResponse(res, 'Lista de endereços retornada com sucesso.', addresses);
+        successResponse(res, 'Lista de endereços retornada com sucesso.', addresses.data, addresses.pagination);
     } catch (err) {
         next(err);
     }

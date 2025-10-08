@@ -14,7 +14,7 @@ exports.create = async (req, res, next) => {
 exports.getAll = async (req, res, next) => {
     try {
         const categories = await categoryService.getAll(req.query);
-        successResponse(res, 'Lista de categorias retornada com sucesso.', categories);
+        successResponse(res, 'Lista de categorias retornada com sucesso.', categories.data, categories.pagination);
     } catch (err) {
         next(err);
     }

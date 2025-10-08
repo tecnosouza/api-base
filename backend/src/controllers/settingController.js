@@ -14,7 +14,7 @@ exports.create = async (req, res, next) => {
 exports.getAll = async (req, res, next) => {
     try {
         const settings = await settingService.getAll(req.query);
-        successResponse(res, 'Lista de configurações retornada com sucesso.', settings);
+        successResponse(res, 'Lista de configurações retornada com sucesso.', settings.data, settings.pagination);
     } catch (err) {
         next(err);
     }

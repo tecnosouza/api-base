@@ -14,7 +14,7 @@ exports.create = async (req, res, next) => {
 exports.getAll = async (req, res, next) => {
     try {
         const phoneNotes = await phoneNoteService.getAll(req.query);
-        successResponse(res, 'Lista de notas de telefone retornada com sucesso.', phoneNotes);
+        successResponse(res, 'Lista de notas de telefone retornada com sucesso.', phoneNotes.data, phoneNotes.pagination);
     } catch (err) {
         next(err);
     }

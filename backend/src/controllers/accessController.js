@@ -14,7 +14,7 @@ exports.create = async (req, res, next) => {
 exports.getAll = async (req, res, next) => {
     try {
         const accesses = await accessService.getAll(req.query);
-        successResponse(res, 'Lista de acessos retornada com sucesso.', accesses);
+        successResponse(res, 'Lista de acessos retornada com sucesso.', accesses.data, accesses.pagination);
     } catch (err) {
         next(err);
     }

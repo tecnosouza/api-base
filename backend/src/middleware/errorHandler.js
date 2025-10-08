@@ -2,7 +2,7 @@
 const loadEnv = require('../config/env');
 loadEnv();
 
-const EmailService = require('../services/EmailService');
+const EmailService = require('../services/emailService');
 const { errorResponse } = require('../utils/responseUtils');
 const logError = require('../utils/ErrorLogs');
 const AppError = require('@utils/appError');

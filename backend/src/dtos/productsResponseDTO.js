@@ -20,4 +20,4 @@ class ProductsResponseDTO {
     }
 }
 
-module.exports = ProductsResponseDTO;
+module.exports = { ProductsResponseDTO };
