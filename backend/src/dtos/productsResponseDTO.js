@@ -6,11 +6,12 @@ class ProductsResponseDTO {
         this.description = product.description;
         this.values = product.values;
         this.applications = product.applications;
-        this.photo = product.photo;
+        this.photo_name = product.photo_name;
+        this.photo_size = product.photo_size;
+        this.photo_link = product.photo_link;
         this.is_active = product.is_active;
         this.created_at = product.created_at;
         this.updated_at = product.updated_at;
-        this.deleted_at = product.deleted_at;
         if (product.category) {
             this.category = {
                 id: product.category.id,

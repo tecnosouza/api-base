@@ -108,7 +108,7 @@ router.get('/product/:id', authenticate, productController.getById);
  *       500:
  *         description: Erro do servidor.
  */
-router.put('/product/:id', authenticate, createValidationProduct(), upload.single('image'), productController.update);
+router.put('/product/:id', authenticate, upload.single('image'), productController.update);
 
 /**
  * @swagger
