@@ -62,7 +62,7 @@ exports.delete = async (id) => {
             await transaction.rollback();
             return false;
         }
-        await category.update({ deleted_at: new Date() }, { transaction });
+        await category.destroy({ transaction });
         await transaction.commit();
         return true;
     } catch (error) {

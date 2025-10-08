@@ -70,7 +70,7 @@ exports.delete = async (id) => {
             await transaction.rollback();
             return false;
         }
-        await accessLevel.update({ deletedAt: new Date() }, { transaction });
+        await accessLevel.destroy({ transaction });
         await transaction.commit();
         return true;
     } catch (error) {

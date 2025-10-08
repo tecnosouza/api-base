@@ -66,7 +66,7 @@ exports.delete = async (id) => {
             await transaction.rollback();
             return false;
         }
-        await address.update({ deletedAt: new Date() }, { transaction });
+        await address.destroy({ transaction });
         await transaction.commit();
         return true;
     } catch (error) {
