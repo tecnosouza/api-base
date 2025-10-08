@@ -47,8 +47,8 @@ const setupEnvironment = async () => {
 
         await runCommand('yarn sequelize db:migrate');
         await runCommand('yarn sequelize db:seed:all', {
-			ignoreErrors: ['ENOENT', 'no such file or directory'],
-		});
+            ignoreErrors: ['ENOENT', 'no such file or directory'],
+        });
 
         console.log('✅ Ambiente de desenvolvimento configurado com sucesso!');
     } catch (error) {
