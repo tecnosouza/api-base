@@ -1,0 +1,16 @@
+[
+  {
+    "imagem": "/produtos/produto1.png",
+    "titulo": "MANTA ASFÁLTICA TIPO I",
+    "descricao": "Manta asfáltica impermeabilizante para lajes e coberturas.",
+    "valores": "Rolos de 10m x 1m.",
+    "aplicacoes": "Lajes de concreto, telhados, áreas molhadas."
+  },
+  {
+    "imagem": "/produtos/produto1.png",
+    "titulo": "MANTA ASFÁLTICA TIPO II",
+    "descricao": "Manta asfáltica de alta resistência para grandes áreas.",
+    "valores": "Rolos de 10m x 1m.",
+    "aplicacoes": "Grandes lajes, estacionamentos, reservatórios."
+  }
+]

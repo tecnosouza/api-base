@@ -14,7 +14,10 @@ class ProductsResponseDTO {
         if (product.category) {
             this.category = {
                 id: product.category.id,
-                name: product.category.name,
+                title_menu: product.category.title_menu,
+                title: product.category.title,
+                description: product.category.description,
+                is_active: product.category.is_active,
             };
         }
     }

@@ -11,11 +11,10 @@ exports.create = async (personData) => {
     const createDTO = new CreatePersonDTO(personData);
     const transaction = await sequelize.transaction();
     try {
-        const { username, password, name, lastName, dateOfBirth, rg, cpf, street, number, neighborhood, city, state } = createDTO;
+        const { username, password, name, last_name, date_of_birth, rg, cpf, admin } = createDTO;
 
         let person = await Person.findOne({ where: { username }, transaction });
         if (person) {
-            await transaction.rollback();
             throw new AppError(
                 'Usuário já cadastrado!',
                 {
@@ -32,15 +31,11 @@ exports.create = async (personData) => {
             username,
             password: hashedPassword,
             name,
-            lastName,
-            dateOfBirth,
+            last_name,
+            date_of_birth,
             rg,
             cpf,
-            street,
-            number,
-            neighborhood,
-            city,
-            state
+            admin
         }, { transaction });
 
         await transaction.commit();

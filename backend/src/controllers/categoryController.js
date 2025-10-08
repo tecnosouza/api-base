@@ -1,11 +1,11 @@
 const categoryService = require('@services/categoryService');
-const { createResponseDTO } = require('@dtos/categoryDTO');
+const { CategoryResponseDTO } = require('@dtos/categoryDTO');
 const { successResponse } = require('../utils/responseUtils');
 
 exports.create = async (req, res, next) => {
     try {
         const category = await categoryService.create(req.body);
-        successResponse(res, 'Registro realizado com sucesso.', new createResponseDTO(category), 201);
+        successResponse(res, 'Registro realizado com sucesso.', new CategoryResponseDTO(category), 201);
     } catch (err) {
         next(err); 
     }

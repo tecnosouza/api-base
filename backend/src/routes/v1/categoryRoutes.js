@@ -102,7 +102,7 @@ router.get('/category/:id', authenticate, categoryController.getById);
  *       500:
  *         description: Erro do servidor.
  */
-router.put('/category/:id', authenticate, createValidationCategory(), categoryController.update);
+router.put('/category/:id', authenticate, categoryController.update);
 
 /**
  * @swagger

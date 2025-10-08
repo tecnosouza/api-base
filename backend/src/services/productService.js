@@ -3,7 +3,7 @@ const ModelName = 'productService';
 const DataBaseService = require('../database/services/DataBaseService');
 const { ProductsResponseDTO } = require('@dtos/productsResponseDTO');
 const { PaginationDTO } = require('@dtos/paginationDTO');
-const { Product, sequelize } = require('@models/index.js');
+const { Product, Category, sequelize } = require('@models/index.js');
 const { moveFile, deleteFile } = require('../utils/fileUtils.js');
 const path = require('path');
 
@@ -74,7 +74,14 @@ exports.create = async (req) => {
 };
 
 exports.getAll = async (query) => {
-    const include = [];
+    const include = [
+        {
+            model: Category,
+            as: 'category',
+            attributes: ['id', 'title_menu'] 
+        }
+    ];
+
     const pagination = await DataBaseService.dataFilter(Product, query, include);
     if (pagination.code != 200) {
         return pagination;
@@ -82,13 +89,16 @@ exports.getAll = async (query) => {
 
     const products = await Product.findAll({
         where: pagination.objWhere,
-        attributes: (pagination.attributes != undefined) ? pagination.attributes : null,
-        include: (pagination.include && pagination.include.length > 0) ? pagination.include : null,
-        order: (pagination.orderBy && pagination.orderBy.length > 0) ? pagination.orderBy : [['id', 'DESC']],
+        attributes: pagination.attributes ?? null,
+        include,
+        order: pagination.orderBy?.length ? pagination.orderBy : [['id', 'DESC']],
         limit: pagination.limit ? parseInt(pagination.limit) : null
     });
 
-    return { data: products.map(product => new ProductsResponseDTO(product)), pagination: new PaginationDTO(pagination) };
+    return {
+        data: products.map(product => new ProductsResponseDTO(product)),
+        pagination: new PaginationDTO(pagination)
+    };
 };
 
 exports.getById = async (id) => {

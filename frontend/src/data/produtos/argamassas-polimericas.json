@@ -1,0 +1,16 @@
+[
+  {
+    "imagem": "/produtos/produto1.png",
+    "titulo": "ARGA POLIMÉRICA 1",
+    "descricao": "Argamassa polimérica para impermeabilização de superfícies.",
+    "valores": "Embalagens de 10kg e 25kg.",
+    "aplicacoes": "Impermeabilização de piscinas, reservatórios, baldrames."
+  },
+  {
+    "imagem": "/produtos/produto1.png",
+    "titulo": "ARGA POLIMÉRICA 2",
+    "descricao": "Argamassa polimérica de alta performance para áreas úmidas.",
+    "valores": "Embalagens de 15kg e 30kg.",
+    "aplicacoes": "Banheiros, cozinhas, áreas de serviço."
+  }
+]

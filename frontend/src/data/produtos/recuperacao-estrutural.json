@@ -1,0 +1,16 @@
+[
+  {
+    "imagem": "/produtos/produto1.png",
+    "titulo": "ARGA REPARO ESTRUTURAL",
+    "descricao": "Argamassa para reparo e reforço estrutural de concreto.",
+    "valores": "Sacos de 25kg.",
+    "aplicacoes": "Recuperação de pilares, vigas, lajes e estruturas de concreto."
+  },
+  {
+    "imagem": "/produtos/produto1.png",
+    "titulo": "IMPERMEABILIZANTE CIMENTÍCIO",
+    "descricao": "Impermeabilizante cimentício flexível para estruturas.",
+    "valores": "Sacos de 20kg.",
+    "aplicacoes": "Impermeabilização de estruturas sujeitas a movimentação, como reservatórios e piscinas."
+  }
+]

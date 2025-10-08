@@ -1,11 +1,11 @@
 const accessService = require('@services/accessService');
-const { createResponseDTO } = require('@dtos/accessDTO');
+const { AccessResponseDTO } = require('@dtos/accessDTO');
 const { successResponse } = require('../utils/responseUtils');
 
 exports.create = async (req, res, next) => {
     try {
         const access = await accessService.create(req.body);
-        successResponse(res, 'Registro realizado com sucesso.', new createResponseDTO(access), 201);
+        successResponse(res, 'Registro realizado com sucesso.', new AccessResponseDTO(access), 201);
     } catch (err) {
         next(err); 
     }

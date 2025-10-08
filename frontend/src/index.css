@@ -1,0 +1,297 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Pollimper Design System - Inspired by the Adobe XD mockup
+All colors MUST be HSL.
+*/
+
+
+/* Scrollbar customizada para carrossel */
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@layer base {
+  :root {
+    /* Paleta de cores moderna e profissional */
+    --background: 0 0% 98%;
+    --foreground: 220 18% 20%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 18% 20%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 18% 20%;
+
+    /* Brand colors - Based on Pollimper design */
+    --pollimper-navy: 210 100% 15%;     /* Deep navy blue background */
+    --pollimper-green: 81 76% 47%;     /* Vibrant lime green accent */
+    --pollimper-light-green: 75 60% 65%; /* Lighter green for hover states */
+
+    /* Azul corporativo moderno */
+    --primary: 223 47% 23%;
+    --primary-foreground: 210 40% 98%;
+    
+    /* Cinza elegante */
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 220 9% 46%;
+    
+    /* Cores neutras balanceadas */
+    --muted: 220 13% 95%;
+    --muted-foreground: 220 9% 46%;
+    --accent: 220 13% 95%;
+    --accent-foreground: 220 9% 46%;
+    
+    /* Estados e alertas */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+    --success: 142 71% 45%;
+    --success-foreground: 210 40% 98%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 210 40% 98%;
+    
+    /* Bordas e inputs */
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 223 47% 23%;
+    --radius: 0.75rem;
+    
+    /* Variáveis para gráficos */
+    --chart-1: 223 47% 23%;
+    --chart-2: 142 71% 45%;
+    --chart-3: 38 92% 50%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 197 37% 24%;
+  }
+
+  .dark {
+    --background: 220 18% 8%;
+    --foreground: 210 40% 98%;
+    --card: 220 18% 10%;
+    --card-foreground: 210 40% 98%;
+    --popover: 220 18% 10%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 223 47% 33%;
+    --primary-foreground: 220 18% 8%;
+    --secondary: 215 27% 17%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 215 27% 17%;
+    --muted-foreground: 217 32% 65%;
+    --accent: 215 27% 17%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 215 27% 17%;
+    --input: 215 27% 17%;
+    --ring: 223 47% 33%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    line-height: 1.6;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+    line-height: 1.25;
+  }
+  
+  h1 {
+    @apply text-3xl lg:text-4xl;
+  }
+  
+  h2 {
+    @apply text-2xl lg:text-3xl;
+  }
+  
+  h3 {
+    @apply text-xl lg:text-2xl;
+  }
+
+  /* Scrollbar personalizada moderna */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--muted));
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground) / 0.3);
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.5);
+  }
+}
+
+/* Componentes modernos */
+@layer components {
+  /* Card moderno com glassmorphism sutil */
+  .modern-card {
+    @apply bg-card/95 backdrop-blur-sm border border-border rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300;
+  }
+  
+  /* Input moderno */
+  .modern-input {
+    @apply w-full px-4 py-3 bg-background/50 border border-input rounded-xl 
+           focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent
+           placeholder:text-muted-foreground transition-all duration-200
+           hover:border-primary/30;
+  }
+  
+  /* Botão primário moderno */
+  .modern-btn-primary {
+    @apply inline-flex items-center justify-center px-6 py-3 bg-primary text-primary-foreground 
+           font-medium rounded-xl hover:bg-primary/90 focus:outline-none focus:ring-2 
+           focus:ring-ring focus:ring-offset-2 transition-all duration-200 
+           disabled:opacity-50 disabled:pointer-events-none shadow-lg hover:shadow-xl
+           hover:scale-[1.02] active:scale-[0.98];
+  }
+  
+  /* Botão secundário moderno */
+  .modern-btn-secondary {
+    @apply inline-flex items-center justify-center px-6 py-3 bg-secondary text-secondary-foreground 
+           font-medium rounded-xl hover:bg-secondary/80 focus:outline-none focus:ring-2 
+           focus:ring-ring focus:ring-offset-2 transition-all duration-200 
+           disabled:opacity-50 disabled:pointer-events-none border border-border
+           hover:scale-[1.02] active:scale-[0.98];
+  }
+  
+  /* Item de navegação moderno */
+  .modern-nav-item {
+    @apply flex items-center px-4 py-3 text-muted-foreground hover:text-foreground 
+           hover:bg-accent/50 rounded-xl transition-all duration-200 relative;
+  }
+  
+  .modern-nav-item.active {
+    @apply text-primary bg-primary/10 font-medium;
+  }
+  
+  /* Indicador de status moderno */
+  .modern-status-badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium
+           ring-1 ring-inset;
+  }
+  
+  .modern-status-badge.success {
+    @apply bg-success/10 text-success ring-success/20;
+  }
+  
+  .modern-status-badge.warning {
+    @apply bg-warning/10 text-warning ring-warning/20;
+  }
+  
+  .modern-status-badge.error {
+    @apply bg-destructive/10 text-destructive ring-destructive/20;
+  }
+  
+  .modern-status-badge.info {
+    @apply bg-primary/10 text-primary ring-primary/20;
+  }
+}
+
+/* Utilitários modernos */
+@layer utilities {
+  /* Gradientes sutis */
+  .gradient-primary {
+    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary)) 100%);
+  }
+  
+  .gradient-background {
+    background: linear-gradient(135deg, 
+      hsl(var(--background)) 0%, 
+      hsl(var(--muted)) 50%, 
+      hsl(var(--background)) 100%);
+  }
+  
+  /* Animações suaves */
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+  
+  .animate-slide-up {
+    animation: slideUp 0.5s ease-out forwards;
+  }
+  
+  .animate-scale-in {
+    animation: scaleIn 0.3s ease-out forwards;
+  }
+  
+  /* Glass effect */
+  .glass-effect {
+    @apply bg-white/10 backdrop-blur-md border border-white/20;
+  }
+  
+  /* Hover effects */
+  .hover-lift {
+    @apply transition-transform duration-200 hover:-translate-y-1;
+  }
+  
+  .hover-glow {
+    @apply transition-shadow duration-200 hover:shadow-lg hover:shadow-primary/25;
+  }
+}
+
+/* Keyframes para animações */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Responsive utilities */
+@media (max-width: 768px) {
+  .modern-card {
+    @apply p-4 rounded-xl;
+  }
+  
+  .modern-btn-primary,
+  .modern-btn-secondary {
+    @apply px-4 py-2 text-sm;
+  }
+}

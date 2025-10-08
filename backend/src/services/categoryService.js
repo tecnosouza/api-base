@@ -2,7 +2,7 @@ const DataBaseService = require('../database/services/DataBaseService');
 const { Category, sequelize } = require('@models/index.js');
 const { CreateCategoryDTO, UpdateCategoryDTO, CategoryResponseDTO } = require('@dtos/categoryDTO');
 const { PaginationDTO } = require('@dtos/paginationDTO');
-const attributes = { exclude: ['created_at', 'updated_at', 'deleted_at'] };
+const attributes = { exclude: ['updated_at', 'deleted_at'] };
 
 exports.create = async (categoryData) => {
     const createDTO = new CreateCategoryDTO(categoryData);
@@ -62,7 +62,7 @@ exports.delete = async (id) => {
             await transaction.rollback();
             return false;
         }
-        await category.update({ deletedAt: new Date() }, { transaction });
+        await category.update({ deleted_at: new Date() }, { transaction });
         await transaction.commit();
         return true;
     } catch (error) {

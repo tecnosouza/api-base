@@ -1,12 +1,12 @@
 const personService = require('@services/personService');
-const { createResponseDTO } = require('@dtos/personDTO');
+const { PersonResponseDTO } = require('@dtos/personDTO');
 const { successResponse } = require('@utils/responseUtils');
 const AppError = require('@utils/appError');
 
 exports.create = async (req, res, next) => {
     try {
         const person = await personService.create(req.body);
-        successResponse(res, 'Registro realizado com sucesso.', new createResponseDTO(person), 201);
+        successResponse(res, 'Registro realizado com sucesso.', new PersonResponseDTO(person), 201);
     } catch (err) {
         next(err); 
     }
