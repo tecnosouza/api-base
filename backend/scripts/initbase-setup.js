@@ -45,7 +45,9 @@ const setupEnvironment = async () => {
             console.log('⚠️  SQLite detectado — pulando o comando "db:create" (arquivo será criado automaticamente).');
         }
 
-        await runCommand('yarn sequelize db:migrate');
+		await runCommand('yarn sequelize db:migrate', {
+			ignoreErrors: ['ENOENT', 'no such file or directory'],
+		});
         await runCommand('yarn sequelize db:seed:all', {
             ignoreErrors: ['ENOENT', 'no such file or directory'],
         });
