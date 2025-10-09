@@ -34,14 +34,22 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const login = async (email: string, password: string) => {
     try {
       setLoading(true);
+
+      // Faz login com email
       const response = await authAPI.login({ email, password });
-      
+
+      // Salva token no localStorage
       localStorage.setItem('auth_token', response.data.token);
-      const responseUser = await authAPI.getCurrentUser();
-      console.log('responseUser: ', responseUser)
-      localStorage.setItem('user_data', JSON.stringify(responseUser));
-      // Dados do usuário são setados aqui
-      setPerson(response.data.person);
+
+      // Pega usuário completo após login
+      const currentUser = await authAPI.getCurrentUser();
+      console.log('currentUser: ', currentUser);
+
+      // Salva usuário no localStorage
+      localStorage.setItem('user_data', JSON.stringify(currentUser));
+
+      // Atualiza estado do contexto
+      setPerson(currentUser); // ⚡️ Aqui é a mudança importante
 
       CustomToast({ message: 'Login realizado com sucesso!' });
     } catch (error: unknown) {

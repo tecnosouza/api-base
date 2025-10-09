@@ -9,6 +9,7 @@ import {
   X,
   ChevronLeft,
   CreditCardIcon,
+  Home,
 } from "lucide-react";
 
 const Sidebar = () => {
@@ -17,6 +18,7 @@ const Sidebar = () => {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   
   const menuItems = [
+    { icon: Home, label: "Home", path: "/home", color: "text-blue-600" },
     { icon: CreditCardIcon, label: "Usuários", path: "/users", color: "text-purple-600" },
     { icon: FileText, label: "Categorias", path: "/categories", color: "text-green-600" },
     { icon: CreditCardIcon, label: "Produtos", path: "/products", color: "text-purple-600" }

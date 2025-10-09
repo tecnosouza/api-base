@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContextContext';
 import { useNavigate } from 'react-router-dom';
-import { User, Settings, LogOut, ChevronUp } from 'lucide-react';
+import { User, LogOut, ChevronUp } from 'lucide-react';
 
 const UserProfile = () => {
   const { user, logout } = useAuth();
@@ -9,13 +9,13 @@ const UserProfile = () => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  // Fecha dropdown ao clicar fora
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     };
-
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
@@ -24,6 +24,10 @@ const UserProfile = () => {
     logout();
     navigate('/');
   };
+
+  // Extraindo nome e role de forma segura
+  const userName = user?.data?.name ? user.data.name.split(" ")[0] : "Carregando...";
+  const userRole = user?.role || "";
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -34,18 +38,15 @@ const UserProfile = () => {
         <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
           <User size={20} className="text-white" />
         </div>
+
         <div className="flex-1 text-left">
-          <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-            {user?.data?.name?.split(" ")[0] || user?.data?.email}
-          </p>
-          <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">
-            {user?.role}
-          </p>
+          <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{userName}</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">{userRole}</p>
         </div>
+
         <ChevronUp
           size={16}
-          className={`text-gray-500 dark:text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''
-            }`}
+          className={`text-gray-500 dark:text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`}
         />
       </button>
 

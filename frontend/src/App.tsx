@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Auth/Login";
+import Home from "./pages/Home";
 import Index from "./pages/Index";
 import SobreNos from "./pages/SobreNos";
 import Atuacao from "./pages/Atuacao";
@@ -47,10 +48,9 @@ const App = () => (
               <Route path="/contato" element={<Contato />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
-
-                              {/* Rota de escolha de role */}
               {/* Rotas de usuário comum */}
               <Route element={<Layout />}>
+                <Route path="/home" element={<Home />} />
                 <Route path="/categories" element={<Categories />} />
                 <Route path="/products" element={<Products />} />
                 <Route path="/users" element={<Users />} />

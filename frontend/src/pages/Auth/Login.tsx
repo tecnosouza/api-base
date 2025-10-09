@@ -19,7 +19,7 @@ const Login = () => {
     setIsLoading(true);
     try {
       await login(formData.username, formData.password);
-      navigate("/categories");
+      navigate("/home");
     } catch {
       // Erros já tratados no AuthContext
     } finally {
