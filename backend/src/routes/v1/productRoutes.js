@@ -133,4 +133,9 @@ router.put('/product/:id', authenticate, upload.single('image'), productControll
  */
 router.delete('/product/:id', authenticate, productController.delete);
 
+/**
+ * Rota publica para o site popular
+ */
+router.get('/product-site/:idCategoria', productController.getSite);
+
 module.exports = router;

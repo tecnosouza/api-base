@@ -55,3 +55,12 @@ exports.delete = async (req, res, next) => {
         next(err);
     }
 };
+
+exports.getSite = async (req, res, next) => {
+    try {
+        const products = await productService.getSite(req.params.idCategoria);
+        successResponse(res, 'Lista de produtos retornada com sucesso.', products);
+    } catch (err) {
+        next(err);
+    }
+};

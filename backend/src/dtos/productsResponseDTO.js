@@ -24,4 +24,15 @@ class ProductsResponseDTO {
     }
 }
 
-module.exports = { ProductsResponseDTO };
+class SiteProductsResponseDTO {
+    constructor(product) {
+        this.id = product.id;
+        this.model = product.model;
+        this.description = product.description;
+        this.values = product.values;
+        this.applications = product.applications;
+        this.photo_link = product.photo_link;
+    }
+}
+
+module.exports = { ProductsResponseDTO, SiteProductsResponseDTO };

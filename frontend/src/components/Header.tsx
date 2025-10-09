@@ -1,26 +1,23 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, Menu, X } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
-import { useRef } from "react";
 
 const Header = ({ transparent = false }) => {
   const location = useLocation();
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const [isNossaLojaDropdownOpen, setNossaLojaDropdownOpen] = useState(false);
+  const [nossaLojaSubmenu, setNossaLojaSubmenu] = useState<any[]>([]);
   const dropdownTimeout = useRef<NodeJS.Timeout | null>(null);
+  const [isTransparent, setIsTransparent] = useState(true);
 
   const isActive = (path: string) => location.pathname === path;
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+  const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
 
   const navLinks = [
     { path: "/", label: "Home" },
     { label: "Atuação", icon: <ChevronDown className="w-3 h-3 ml-1" /> },
-    // Comentado a pedido da empresa
-    // { path: "/portfolio", label: "Portfólio" },
     { label: "Nossa loja", icon: <ChevronDown className="w-3 h-3 ml-1" /> },
     { path: "/contato", label: "Contato" },
   ];
@@ -32,29 +29,38 @@ const Header = ({ transparent = false }) => {
     { label: "Injeção química", path: "/atuacao/injecao" },
   ];
 
-  const nossaLojaSubmenu = [ // Novo submenu
-    { label: "Aditivos + adesivos", path: "/nossa-loja/produtos/aditivos-adesivos" },
-    { label: "Argamassas poliméricas para impermeabilização", path: "/nossa-loja/produtos/argamassas-polimericas" },
-    { label: "Selantes", path: "/nossa-loja/produtos/selantes" },
-    { label: "Acrílicos (manta líquida) e masquite", path: "/nossa-loja/produtos/acrilicos" },
-    { label: "Membrana auto adesivas alumínio", path: "/nossa-loja/produtos/membrana-auto-adesivas" },
-    { label: "Mantas asfálticas", path: "/nossa-loja/produtos/mantas-asfalticas" },
-    { label: "Primer", path: "/nossa-loja/produtos/primer" },
-    { label: "Recuperação estrutural e impermeabilização", path: "/nossa-loja/produtos/recuperacao-estrutural" },
-  ];
+  // Fetch submenu da nossa loja da API
+  useEffect(() => {
+    const fetchNossaLojaSubmenu = async () => {
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/${import.meta.env.VITE_API_VERSION}/category-site`
+        );
+        if (!response.ok) throw new Error("Erro ao buscar categorias");
+        const data = await response.json();
 
-  const [isTransparent, setIsTransparent] = useState(true);
+        const formatted = data.data.map((item: any) => ({
+          id: item.id,
+          title_menu: item.title_menu,
+          title: item.title,
+          description: item.description,
+          path: item.path,
+        }));
+
+        setNossaLojaSubmenu(formatted);
+      } catch (error) {
+        console.error("Erro ao carregar categorias da nossa loja:", error);
+      }
+    };
+
+    fetchNossaLojaSubmenu();
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
       const scrollTop = window.scrollY;
-      if (scrollTop > 500) {
-        setIsTransparent(false); // Scrollou => Header sólido
-      } else {
-        setIsTransparent(true); // Topo => Header transparente
-      }
+      setIsTransparent(scrollTop <= 500);
     };
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -78,7 +84,12 @@ const Header = ({ transparent = false }) => {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex max-h-8 mr-20 transform ">
-          <div className={`flex items-center space-x-0 ${transparent ? "bg-transparent" : "bg-pollimper-navy/95 backdrop-blur-sm"} rounded-full px-2 py-2 border-2 border-pollimper-green`}>
+          <div
+            className={`flex items-center space-x-0 ${transparent
+              ? "bg-transparent"
+              : "bg-pollimper-navy/95 backdrop-blur-sm"
+              } rounded-full px-2 py-2 border-2 border-pollimper-green`}
+          >
             {navLinks.map(({ path, label, icon }) => {
               if (label === "Atuação") {
                 return (
@@ -90,9 +101,7 @@ const Header = ({ transparent = false }) => {
                       setDropdownOpen(true);
                     }}
                     onMouseLeave={() => {
-                      dropdownTimeout.current = setTimeout(() => {
-                        setDropdownOpen(false);
-                      }, 300); // 1 segundo
+                      dropdownTimeout.current = setTimeout(() => setDropdownOpen(false), 300);
                     }}
                   >
                     <Button
@@ -100,7 +109,7 @@ const Header = ({ transparent = false }) => {
                       className={`${location.pathname.includes("/atuacao")
                         ? "text-[hsl(81_76%_47%)] font-semibold"
                         : "text-white"
-                        } rounded-full px-5 py-2 text-base xl:text-xl flex items-center max-h-4 `}
+                        } rounded-full px-5 py-2 text-base xl:text-xl flex items-center max-h-4`}
                     >
                       {label} {icon}
                     </Button>
@@ -112,10 +121,12 @@ const Header = ({ transparent = false }) => {
                             key={item.path}
                             to={item.path}
                             onClick={scrollToTop}
-                            className={`block py-2 transition-colors font-medium ${index !== atuacaoSubmenu.length - 1 ? 'border-b border-gray-700' : ''
+                            className={`block py-2 transition-colors font-medium ${index !== atuacaoSubmenu.length - 1
+                              ? "border-b border-gray-700"
+                              : ""
                               } ${isActive(item.path)
-                                ? 'text-blue-800 font-semibold'
-                                : 'hover:text-green-600'
+                                ? "text-blue-800 font-semibold"
+                                : "hover:text-green-600"
                               }`}
                           >
                             {item.label}
@@ -123,10 +134,9 @@ const Header = ({ transparent = false }) => {
                         ))}
                       </div>
                     )}
-
                   </div>
                 );
-              } else if (label === "Nossa loja") { // Nova lógica para "Nossa loja"
+              } else if (label === "Nossa loja") {
                 return (
                   <div
                     key={label}
@@ -136,9 +146,7 @@ const Header = ({ transparent = false }) => {
                       setNossaLojaDropdownOpen(true);
                     }}
                     onMouseLeave={() => {
-                      dropdownTimeout.current = setTimeout(() => {
-                        setNossaLojaDropdownOpen(false);
-                      }, 300);
+                      dropdownTimeout.current = setTimeout(() => setNossaLojaDropdownOpen(false), 300);
                     }}
                   >
                     <Button
@@ -146,7 +154,7 @@ const Header = ({ transparent = false }) => {
                       className={`${location.pathname.includes("/nossa-loja")
                         ? "text-[hsl(81_76%_47%)] font-semibold"
                         : "text-white"
-                        } rounded-full px-5 py-2 text-base xl:text-xl flex items-center max-h-4 `}
+                        } rounded-full px-5 py-2 text-base xl:text-xl flex items-center max-h-4`}
                     >
                       {label} {icon}
                     </Button>
@@ -156,20 +164,21 @@ const Header = ({ transparent = false }) => {
                         {nossaLojaSubmenu.map((item, index) => (
                           <Link
                             key={item.path}
-                            to={item.path}
+                            to={`/nossa-loja/produtos/${item.path}`}
                             onClick={scrollToTop}
-                            className={`block py-2 transition-colors font-medium ${index !== nossaLojaSubmenu.length - 1 ? 'border-b border-gray-700' : ''
-                              } ${isActive(item.path)
-                                ? 'text-blue-600 font-semibold'
-                                : 'hover:text-green-600'
+                            className={`block py-2 transition-colors font-medium ${index !== nossaLojaSubmenu.length - 1
+                              ? "border-b border-gray-700"
+                              : ""
+                              } ${isActive(`/nossa-loja/produtos/${item.path}`)
+                                ? "text-blue-600 font-semibold"
+                                : "hover:text-green-600"
                               }`}
                           >
-                            {item.label}
+                            {item.title_menu}
                           </Link>
                         ))}
                       </div>
                     )}
-
                   </div>
                 );
               }
@@ -226,7 +235,10 @@ const Header = ({ transparent = false }) => {
                           <Link
                             key={item.path}
                             to={item.path}
-                            onClick={() => { setMobileMenuOpen(false); scrollToTop(); }}
+                            onClick={() => {
+                              setMobileMenuOpen(false);
+                              scrollToTop();
+                            }}
                             className="block text-white/80 hover:text-green-600 text-base xl:text-xl"
                           >
                             {item.label}
@@ -236,11 +248,13 @@ const Header = ({ transparent = false }) => {
                     )}
                   </div>
                 );
-              } else if (label === "Nossa loja") { // Nova lógica para "Nossa loja" no mobile
+              } else if (label === "Nossa loja") {
                 return (
                   <div key={label} className="space-y-2">
                     <button
-                      onClick={() => setNossaLojaDropdownOpen(!isNossaLojaDropdownOpen)}
+                      onClick={() =>
+                        setNossaLojaDropdownOpen(!isNossaLojaDropdownOpen)
+                      }
                       className="text-left w-full text-white text-base xl:text-xl font-medium px-4 py-2 flex justify-between items-center"
                     >
                       <span>{label}</span>
@@ -254,11 +268,14 @@ const Header = ({ transparent = false }) => {
                         {nossaLojaSubmenu.map((item) => (
                           <Link
                             key={item.path}
-                            to={item.path}
-                            onClick={() => { setMobileMenuOpen(false); scrollToTop(); }}
+                            to={`/nossa-loja/produtos/${item.path}`}
+                            onClick={() => {
+                              setMobileMenuOpen(false);
+                              scrollToTop();
+                            }}
                             className="block text-white/80 hover:text-green-600 text-base xl:text-xl"
                           >
-                            {item.label}
+                            {item.title_menu}
                           </Link>
                         ))}
                       </div>

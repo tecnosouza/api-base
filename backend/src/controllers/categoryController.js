@@ -55,3 +55,12 @@ exports.delete = async (req, res, next) => {
         next(err);
     }
 };
+
+exports.getSite = async (req, res, next) => {
+    try {
+        const categories = await categoryService.getSite();
+        successResponse(res, 'Lista de categorias retornada com sucesso.', categories);
+    } catch (err) {
+        next(err);
+    }
+};

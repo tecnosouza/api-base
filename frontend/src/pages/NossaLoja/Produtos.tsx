@@ -10,12 +10,7 @@ import {
   CarouselPrevious,
   type CarouselApi,
 } from "@/components/ui/carousel";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ArrowDown, ChevronDown } from "lucide-react";
 
 interface Produto {
@@ -26,45 +21,93 @@ interface Produto {
   aplicacoes: string;
 }
 
-const Produtos = () => {
-  const nossaLojaSubmenu = [
-    { label: "Aditivos + adesivos", subLabel: "", path: "aditivos-adesivos" },
-    { label: "Argamassas poliméricas para impermeabilização", subLabel: "", path: "argamassas-polimericas" },
-    { label: "Selantes", subLabel: "", path: "selantes" },
-    { label: "Acrílicos e masquite", subLabel: "(Manta líquida)", path: "acrilicos" },
-    { label: "Membrana auto adesivas alumínio", subLabel: "", path: "membrana-auto-adesivas" },
-    { label: "Mantas asfálticas", subLabel: "", path: "mantas-asfalticas" },
-    { label: "Primer", subLabel: "", path: "primer" },
-    { label: "Recuperação estrutural e impermeabilização", subLabel: "", path: "recuperacao-estrutural" },
-  ];
+interface Categoria {
+  id: number;
+  title_menu: string;
+  title: string;
+  description: string;
+  path: string;
+}
 
+const Produtos = () => {
   const { produto } = useParams();
   const [produtos, setProdutos] = useState<Produto[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Produto | null>(null);
   const [carouselApi, setCarouselApi] = useState<CarouselApi | null>(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [subCategorias, setSubCategorias] = useState<Categoria[]>([]);
 
   const visibleCount = 6;
-  const tituloProduto = nossaLojaSubmenu.find((item) => item.path === produto)?.label || "Nossos Produtos";
-  const subTituloProduto = nossaLojaSubmenu.find((item) => item.path === produto)?.subLabel || "Nossos Produtos";
 
+  // Buscar categorias da API para popular o submenu
+  useEffect(() => {
+    const fetchCategorias = async () => {
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/${import.meta.env.VITE_API_VERSION}/category-site`
+        );
+        if (!response.ok) throw new Error("Erro ao buscar categorias");
+
+        const data = await response.json();
+        const formatted: Categoria[] = data.data.map((item: any) => ({
+          id: item.id,
+          title_menu: item.title_menu,
+          title: item.title,
+          description: item.description || "",
+          path: item.path,
+        }));
+        setSubCategorias(formatted);
+      } catch (error) {
+        console.error("Erro ao carregar categorias da nossa loja:", error);
+      }
+    };
+
+    fetchCategorias();
+  }, []);
+
+  // Buscar produtos da categoria selecionada
   useEffect(() => {
     const loadProducts = async () => {
+      if (!produto || subCategorias.length === 0) {
+        setProdutos([]);
+        return;
+      }
+
       try {
-        const module = await import(`../../data/produtos/${produto}.json`);
-        setProdutos(module.default);
+        const categoriaSelecionada = subCategorias.find(item => item.path === produto);
+        if (!categoriaSelecionada) {
+          setProdutos([]);
+          return;
+        }
+
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/${import.meta.env.VITE_API_VERSION}/product-site/${categoriaSelecionada.id}`
+        );
+        if (!response.ok) throw new Error("Erro ao buscar produtos");
+
+        const data = await response.json();
+
+        // Mapear para o formato do frontend
+        const formattedProdutos: Produto[] = (data.data || []).map((item: any) => ({
+          imagem: item.photo_link,
+          titulo: item.model,
+          descricao: item.description,
+          valores: item.values,
+          aplicacoes: item.applications,
+        }));
+
+        setProdutos(formattedProdutos);
       } catch (error) {
         console.error("Erro ao carregar produtos:", error);
         setProdutos([]);
       }
     };
 
-    if (produto) {
-      loadProducts();
-    } else {
-      setProdutos([]);
-    }
-  }, [produto]);
+    loadProducts();
+  }, [produto, subCategorias]);
+
+  const tituloProduto = subCategorias.find((item) => item.path === produto)?.title || "Nossos Produtos";
+  const subTituloProduto = subCategorias.find((item) => item.path === produto)?.description || "";
 
   useEffect(() => {
     if (!carouselApi) return;
@@ -73,9 +116,7 @@ const Produtos = () => {
     onSelect();
 
     carouselApi.on("select", onSelect);
-    return () => {
-      carouselApi.off("select", onSelect);
-    };
+    return () => carouselApi.off("select", onSelect);
   }, [carouselApi]);
 
   return (
@@ -100,11 +141,6 @@ const Produtos = () => {
             <p className="text-base md:text-lg text-white leading-snug max-w-xl mx-auto md:mx-0">
               Conheça toda a nossa linha de produtos e entre em contato pelo WhatsApp para adquirir o que você precisa. Na Pollimper, trabalhamos com o melhor para a sua obra.
             </p>
-            <div className="mt-8">
-              <a className="inline-block p-2 rounded-full bg-pollimper-green animate-bounce">
-                <ChevronDown className="w-6 h-6 text-[#002F6C]" />
-              </a>
-            </div>
           </div>
         </div>
       </section>
@@ -126,7 +162,7 @@ const Produtos = () => {
                 align: "start",
                 slidesToScroll: 1,
                 containScroll: "trimSnaps",
-                loop: false
+                loop: false,
               }}
               setApi={setCarouselApi}
               className="w-full overflow-visible"
@@ -151,11 +187,7 @@ const Produtos = () => {
                     >
                       <div className="flex flex-col items-center">
                         <div className="bg-white rounded-3xl p-4 shadow-lg flex justify-center items-center w-full h-[280px] sm:h-[320px] md:h-[360px] lg:h-[400px]">
-                          <img
-                            src={product.imagem}
-                            alt={product.titulo}
-                            className="object-contain max-h-full max-w-full"
-                          />
+                          <img src={product.imagem} alt={product.titulo} className="object-contain max-h-full max-w-full" />
                         </div>
                         <h4 className="mt-4 text-green-600 text-lg sm:text-xl font-bold text-center uppercase px-2">
                           {product.titulo}
@@ -199,7 +231,9 @@ const Produtos = () => {
                           </PopoverContent>
                         </Popover>
                         <a
-                          href="https://api.whatsapp.com/send?phone=5511989597954"
+                          href={`https://api.whatsapp.com/send?phone=5511989597954&text=${encodeURIComponent(
+                            `Olá, gostaria de saber mais sobre o produto ${product.titulo}`
+                          )}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="mt-4 w-12 h-12 rounded-full flex justify-center items-center hover:bg-pollimper-green hover:text-white transition"

@@ -127,4 +127,9 @@ router.put('/category/:id', authenticate, categoryController.update);
  */
 router.delete('/category/:id', authenticate, categoryController.delete);
 
+/**
+ * Rota publica para o site popular
+ */
+router.get('/category-site', categoryController.getSite);
+
 module.exports = router;

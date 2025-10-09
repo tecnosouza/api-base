@@ -1,7 +1,7 @@
 const AppError = require('@utils/appError');
 const ModelName = 'productService';
 const DataBaseService = require('../database/services/DataBaseService');
-const { ProductsResponseDTO } = require('@dtos/productsResponseDTO');
+const { ProductsResponseDTO, SiteProductsResponseDTO } = require('@dtos/productsResponseDTO');
 const { PaginationDTO } = require('@dtos/paginationDTO');
 const { Product, Category, sequelize } = require('@models/index.js');
 const { moveFile, deleteFile } = require('../utils/fileUtils.js');
@@ -78,7 +78,7 @@ exports.getAll = async (query) => {
         {
             model: Category,
             as: 'category',
-            attributes: ['id', 'title_menu'] 
+            attributes: ['id', 'title_menu']
         }
     ];
 
@@ -162,4 +162,9 @@ exports.delete = async (id) => {
         await transaction.rollback();
         throw error;
     }
+};
+
+exports.getSite = async (idCategory) => {
+    const products = await Product.findAll({ where: { is_active: true, category_id: idCategory } });
+    return products.map(product => new SiteProductsResponseDTO(product));
 };

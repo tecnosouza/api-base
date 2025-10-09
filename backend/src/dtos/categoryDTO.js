@@ -4,6 +4,7 @@ class CreateCategoryDTO {
         this.title = title;
         this.description = description;
         this.is_active = is_active;
+        this.path = null;
     }
 }
 
@@ -29,8 +30,19 @@ class CategoryResponseDTO {
     }
 }
 
+class SiteCategoryResponseDTO {
+    constructor(category) {
+        this.id = category.id;
+        this.title_menu = category.title_menu;
+        this.title = category.title;
+        this.description = category.description;
+        this.path = category.path;
+    }
+}
+
 module.exports = {
     CreateCategoryDTO,
     UpdateCategoryDTO,
-    CategoryResponseDTO
+    CategoryResponseDTO,
+    SiteCategoryResponseDTO
 };

@@ -1,13 +1,15 @@
 const DataBaseService = require('../database/services/DataBaseService');
 const { Category, sequelize } = require('@models/index.js');
-const { CreateCategoryDTO, UpdateCategoryDTO, CategoryResponseDTO } = require('@dtos/categoryDTO');
+const { CreateCategoryDTO, UpdateCategoryDTO, CategoryResponseDTO, SiteCategoryResponseDTO } = require('@dtos/categoryDTO');
 const { PaginationDTO } = require('@dtos/paginationDTO');
+const { normalizeString } = require('@utils/stringUtils');
 const attributes = { exclude: ['updated_at', 'deleted_at'] };
 
 exports.create = async (categoryData) => {
     const createDTO = new CreateCategoryDTO(categoryData);
     const transaction = await sequelize.transaction();
-    try {
+    try {        
+        createDTO.path = normalizeString(createDTO.title_menu);
         const category = await Category.create(createDTO, { transaction });
         await transaction.commit();
         return new CategoryResponseDTO(category);
@@ -40,6 +42,7 @@ exports.update = async (id, categoryData) => {
     const updateDTO = new UpdateCategoryDTO(categoryData);
     const transaction = await sequelize.transaction();
     try {
+        updateDTO.path = normalizeString(updateDTO.title_menu);
         let category = await Category.findByPk(id, { transaction });
         if (!category) {
             await transaction.rollback();
@@ -69,4 +72,9 @@ exports.delete = async (id) => {
         await transaction.rollback();
         throw error;
     }
+};
+
+exports.getSite = async () => {
+    const categories = await Category.findAll({ where: { is_active: true }});
+    return categories.map(category => new SiteCategoryResponseDTO(category));
 };
