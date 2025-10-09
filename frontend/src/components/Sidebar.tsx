@@ -17,9 +17,9 @@ const Sidebar = () => {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   
   const menuItems = [
+    { icon: CreditCardIcon, label: "Usuários", path: "/users", color: "text-purple-600" },
     { icon: FileText, label: "Categorias", path: "/categories", color: "text-green-600" },
-    { icon: CreditCardIcon, label: "Produtos", path: "/products", color: "text-purple-600" },
-    { icon: CreditCardIcon, label: "Usuários", path: "/users", color: "text-purple-600" }
+    { icon: CreditCardIcon, label: "Produtos", path: "/products", color: "text-purple-600" }
   ]
 
   const isActive = (path: string) => location.pathname === path;

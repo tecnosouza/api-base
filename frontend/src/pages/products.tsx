@@ -4,7 +4,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useAdvancedTable } from "@/hooks/useAdvancedTable";
 import { useApiQuery } from "@/hooks/useApiQuery";
-import { productsService } from "@/services/productsService";
+import { productsService, ProductRequest } from "@/services/productsService"; // Importa ProductRequest
 import { categoriesService } from "@/services/categoriesService";
 import { Eye, Plus, Trash } from "lucide-react";
 import FormatDate from "../components/ui/format-date";
@@ -31,6 +31,8 @@ interface Product {
     description: string,
     is_active: boolean,
   };
+  image?: File | string | null; // Adicionado o campo de imagem
+  photo_link?: string;
 }
 
 const Products = () => {
@@ -47,6 +49,7 @@ const Products = () => {
     applications: "",
     is_active: true,
     category_id: undefined,
+    image: undefined, // Inicializa o campo de imagem
   });
 
   const [initialData, setInitialData] = useState<Product | null>(null);
@@ -84,7 +87,7 @@ const Products = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await categoriesService.getAll();
+        const response = await categoriesService.getAll({}); // Passa um objeto vazio para os parâmetros de paginação
         setCategories(response?.data ?? []);
       } catch (err) {
         console.error("Erro ao carregar categorias:", err);
@@ -111,6 +114,7 @@ const Products = () => {
       applications: "",
       is_active: true,
       category_id: undefined,
+      image: undefined,
     });
     setInitialData(null);
     setShowModal(true);
@@ -125,6 +129,7 @@ const Products = () => {
       applications: product.applications,
       is_active: product.is_active,
       category_id: product.category_id,
+      image: product.image, // Carrega a imagem existente
     });
     setInitialData({
       model: product.model,
@@ -133,6 +138,7 @@ const Products = () => {
       applications: product.applications,
       is_active: product.is_active,
       category_id: product.category_id,
+      image: product.image,
     });
     setShowModal(true);
   };
@@ -145,7 +151,7 @@ const Products = () => {
   const confirmDelete = async () => {
     if (!productToDelete) return;
     try {
-      await productsService.delete(productToDelete.id!);
+      await productsService.delete(productToDelete.id!.toString()); // Convertido para string
       toast({ title: "Sucesso", description: "Produto excluído com sucesso!" });
       setShowDeleteModal(false);
       setProductToDelete(null);
@@ -175,17 +181,33 @@ const Products = () => {
     e.preventDefault();
     try {
       if (editingProduct) {
-        const updatedFields: Partial<Product> = {};
+        const updatedFields: Partial<ProductRequest> = {};
         Object.keys(formData).forEach((key) => {
-          if (formData[key as keyof Product] !== initialData?.[key as keyof Product]) {
-            updatedFields[key as keyof Product] = formData[key as keyof Product];
+          const currentValue = formData[key as keyof Product];
+          const initialValue = initialData?.[key as keyof Product];
+
+          if (currentValue !== initialValue) {
+            if (key === "image" && currentValue instanceof File) {
+              updatedFields.image = currentValue;
+            } else if (key !== "image" && currentValue !== undefined && currentValue !== null) {
+              (updatedFields as any)[key] = currentValue;
+            }
           }
         });
 
-        await productsService.update(editingProduct.id!, updatedFields);
+        await productsService.update(editingProduct.id!.toString(), updatedFields);
         toast({ title: "Sucesso", description: "Produto atualizado com sucesso!" });
       } else {
-        await productsService.create(formData);
+        const newProductData: ProductRequest = {
+          model: formData.model,
+          description: formData.description,
+          values: formData.values,
+          applications: formData.applications,
+          is_active: formData.is_active,
+          category_id: formData.category_id!,
+          image: formData.image instanceof File ? formData.image : undefined,
+        };
+        await productsService.create(newProductData);
         toast({ title: "Sucesso", description: "Produto criado com sucesso!" });
       }
 
@@ -205,10 +227,20 @@ const Products = () => {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
-    const { name, value, type, checked } = e.target;
+    const { name, type } = e.target;
+    let value: string | boolean | File | undefined;
+
+    if (type === "checkbox") {
+      value = (e.target as HTMLInputElement).checked;
+    } else if (type === "file") {
+      value = (e.target as HTMLInputElement).files?.[0];
+    } else {
+      value = e.target.value;
+    }
+
     setFormData((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: value,
     }));
   };
 
@@ -216,38 +248,26 @@ const Products = () => {
 
   const columns: Column[] = [
     {
-      key: "created_at",
-      label: "Data",
+      key: "photo_link",
+      label: "Imagem",
+      render: (_, row: Product) => (
+        row.photo_link ? (
+          <img src={row.photo_link} alt="Miniatura do Produto" className="h-10 w-10 object-cover rounded-md" />
+        ) : (
+          <span className="text-sm text-gray-500">Sem imagem</span>
+        )
+      ),
+    },
+    {
+      key: "category",
+      label: "Categoria",
       sortable: true,
       render: (_, row: Product) => (
         <span>{row.category.title_menu}</span>
-        // <StatusBadge
-        //   status={row.is_active ? "Ativo" : "Inativo"}
-        //   variant={row.is_active ? "success" : "warning"}
-        // />
       ),
-    },    { key: "model", label: "Modelo", filterable: true, sortable: true },
+    },    
+    { key: "model", label: "Modelo", filterable: true, sortable: true },
     { key: "description", label: "Descrição", filterable: true, sortable: true },
-    { key: "values", label: "Valores", filterable: true, sortable: true },
-    { key: "applications", label: "Aplicações", filterable: true, sortable: true },
-    {
-      key: "created_at",
-      label: "Data",
-      sortable: true,
-      render: (value: string) => (
-        <span className="text-sm text-gray-500">{formatDate(value)}</span>
-      ),
-    },
-    {
-      key: "is_active",
-      label: "Status",
-      render: (_, row: Product) => (
-        <StatusBadge
-          status={row.is_active ? "Ativo" : "Inativo"}
-          variant={row.is_active ? "success" : "warning"}
-        />
-      ),
-    },
     {
       key: "actions",
       label: "Ações",
@@ -303,7 +323,7 @@ const Products = () => {
         pagination={
           paginationData && {
             currentPage: paginationData.page,
-            totalPages: paginationData.totalPages,
+            totalPages: paginationData.last_page, // Corrigido para last_page
             totalItems: paginationData.total,
             itemsPerPage: paginationData.limit,
             limitOptions,
@@ -325,60 +345,12 @@ const Products = () => {
       {/* Modal de criação/edição */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+          <div className="bg-white rounded-lg p-6 w-full max-w-3xl mx-4">
             <h2 className="text-xl font-bold text-gray-900 mb-4">
               {editingProduct ? "Editar Produto" : "Novo Produto"}
             </h2>
 
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium mb-1">Modelo</label>
-                <input
-                  type="text"
-                  name="model"
-                  value={formData.model}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border rounded-md"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-1">Descrição</label>
-                <textarea
-                  name="description"
-                  value={formData.description}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border rounded-md"
-                  rows={2}
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-1">Valores</label>
-                <input
-                  type="text"
-                  name="values"
-                  value={formData.values}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border rounded-md"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-1">Aplicações</label>
-                <input
-                  type="text"
-                  name="applications"
-                  value={formData.applications}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border rounded-md"
-                  required
-                />
-              </div>
-
               {/* Campo: Categoria */}
               <div>
                 <label className="block text-sm font-medium mb-1">Categoria</label>
@@ -398,6 +370,62 @@ const Products = () => {
                 </select>
               </div>
 
+              <div>
+                <label className="block text-sm font-medium mb-1">Modelo</label>
+                <input
+                  type="text"
+                  name="model"
+                  value={formData.model}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border rounded-md"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Descrição</label>
+                <input
+                  type="text"
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border rounded-md"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1">Valores</label>
+                <textarea
+                  name="values"
+                  value={formData.values}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border rounded-md"
+                  rows={3}
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1">Aplicações</label>
+                <textarea                  
+                  name="applications"
+                  value={formData.applications}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border rounded-md"
+                  rows={3}
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Imagem do Produto</label>
+                <input
+                  type="file"
+                  name="image"
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border rounded-md"
+                  accept="image/*"
+                />
+              </div>
               <div className="flex items-center gap-2">
                 <input
                   id="is_active"
@@ -422,15 +450,14 @@ const Products = () => {
                 <button
                   type="submit"
                   disabled={editingProduct ? !hasChanges : !allFieldsFilled}
-                  className={`px-4 py-2 rounded-md text-white ${
-                    editingProduct
-                      ? hasChanges
-                        ? "bg-blue-600 hover:bg-blue-700"
-                        : "bg-blue-300 cursor-not-allowed"
-                      : allFieldsFilled
+                  className={`px-4 py-2 rounded-md text-white ${editingProduct
+                    ? hasChanges
                       ? "bg-blue-600 hover:bg-blue-700"
                       : "bg-blue-300 cursor-not-allowed"
-                  }`}
+                    : allFieldsFilled
+                      ? "bg-blue-600 hover:bg-blue-700"
+                      : "bg-blue-300 cursor-not-allowed"
+                    }`}
                 >
                   Salvar
                 </button>

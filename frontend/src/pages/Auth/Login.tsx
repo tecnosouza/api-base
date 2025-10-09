@@ -1,36 +1,27 @@
-import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 
 const Login = () => {
   const [formData, setFormData] = useState({
-    email: "",
+    username: "",
     password: ""
   });
   const [isLoading, setIsLoading] = useState(false);
-  const { login, user } = useAuth();
+  const { login } = useAuth();
   const navigate = useNavigate();
-
-  // Redirecionar se já estiver logado
-  // useEffect(() => {
-  //   if (user) {
-  //     navigate("/students");
-  //   }
-  // }, [user, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.email || !formData.password) {
-      return;
-    }
+    if (!formData.username || !formData.password) return;
 
     setIsLoading(true);
     try {
-      await login(formData.email, formData.password);
-      navigate("/categories"); // Isso aqui está OK porque vem após evento
-    } catch (error) {
-      // Erro já tratado no AuthContext
+      await login(formData.username, formData.password);
+      navigate("/categories");
+    } catch {
+      // Erros já tratados no AuthContext
     } finally {
       setIsLoading(false);
     }
@@ -45,40 +36,57 @@ const Login = () => {
 
   return (
     <div
-      className="flex min-h-screen items-center justify-center"
+      className="relative flex min-h-screen items-center justify-center bg-gray-900"
       style={{
-        backgroundImage: `url('/backgroud-login.jpg')`,
+        backgroundImage:
+          "url('/lovable-uploads/medium-shot-men-looking-project.jpg')",
         backgroundSize: "cover",
-        backgroundRepeat: "no-repeat",
-        backgroundPosition: "center"
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat"
       }}
     >
-      <div className="w-full max-w-md p-8 border rounded-lg shadow-md bg-primary">
-        <div className="flex items-center justify-center mb-6">
-          {/* <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center mr-2">
-            <span className="text-white font-bold text-sm">Polimper</span>
-          </div> */}
-          <span className="text-xl font-bold text-foreground">Polimper</span>
-        </div>
+      {/* Overlay escuro para contraste */}
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
 
-        <h1 className="text-2xl font-bold mb-6 text-center text-foreground">Entrar</h1>
+      {/* Container principal */}
+      <div className="relative z-10 w-full max-w-md p-8 bg-white/95 rounded-2xl shadow-2xl">
+        <div className="text-center mb-6">
+          <img
+            src="/lovable-uploads/logo-pollimper-cinza.png"
+            alt="Logo Polimper"
+            className="mx-auto mb-3 h-14 w-auto"
+          />
+          <h1 className="text-3xl font-bold text-gray-900">Polimper</h1>
+          <p className="text-sm text-gray-600 mt-1">Acesse sua conta</p>
+        </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium mb-1 text-foreground">
-              Email
+            <label
+              htmlFor="username"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Usuário
             </label>
             <input
-              id="email"
-              value={formData.email}
+              id="username"
+              type="text"
+              value={formData.username}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
-              placeholder="seu@email.com"
+              autoComplete="username"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md 
+                         focus:outline-none focus:ring-2 focus:ring-blue-600 
+                         bg-white text-gray-900"
+              placeholder="seu.usuario"
               required
             />
           </div>
+
           <div>
-            <label htmlFor="password" className="block text-sm font-medium mb-1 text-foreground">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Senha
             </label>
             <input
@@ -86,24 +94,25 @@ const Login = () => {
               id="password"
               value={formData.password}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
+              autoComplete="current-password"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md 
+                         focus:outline-none focus:ring-2 focus:ring-blue-600 
+                         bg-white text-gray-900"
+              placeholder="••••••••"
               required
             />
           </div>
-          <div className="flex justify-end">
-            <Link to="/forgot-password" className="text-sm text-blue-600 hover:underline">
-              Esqueceu a senha?
-            </Link>
-          </div>
+
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-2 px-4 bg-blue-600 text-white rounded-md font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full py-2 px-4 bg-blue-600 text-white font-medium 
+                       rounded-md hover:bg-blue-700 transition 
+                       disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? "Entrando..." : "Entrar"}
           </button>
         </form>
-
       </div>
     </div>
   );

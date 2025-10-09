@@ -28,7 +28,6 @@ module.exports = {
             rg: {
                 type: DataTypes.STRING,
                 allowNull: true,
-                unique: true,
             },
             cpf: {
                 type: DataTypes.STRING,
@@ -65,6 +64,8 @@ module.exports = {
                 }
             ],
         });
+		
+        await queryInterface.sequelize.query('CREATE UNIQUE INDEX unique_rg_not_deleted ON persons (rg) WHERE rg IS NOT NULL AND deleted_at IS NULL;');
 
         const hashedPassword = await bcrypt.hash('123456', 10);
         await queryInterface.bulkInsert('persons', [{
@@ -73,7 +74,7 @@ module.exports = {
             last_name: 'Souza',
             date_of_birth: '1992-09-26',
             rg: '123456789',
-            cpf: '12345678901',            
+            cpf: '12345678901',
             username: 'rick',
             password: hashedPassword,
             created_at: new Date(),

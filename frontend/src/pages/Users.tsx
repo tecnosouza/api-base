@@ -29,7 +29,7 @@ const Users = () => {
   const [editingUser, setEditingUser] = useState<User | null>(null);
 
   const [formData, setFormData] = useState<User>({
-    admin: false,
+    admin: true,
     name: "",
     last_name: "",
     date_of_birth: "",
@@ -77,7 +77,7 @@ const Users = () => {
   const handleNew = () => {
     setEditingUser(null);
     setFormData({
-      admin: false,
+      admin: true,
       name: "",
       last_name: "",
       date_of_birth: "",
@@ -130,14 +130,11 @@ const Users = () => {
     }
   };
 
-  const hasChanges =
-    editingUser && initialData && JSON.stringify(formData) !== JSON.stringify(initialData);
+  const hasChanges = editingUser && initialData && JSON.stringify(formData) !== JSON.stringify(initialData);
 
   const allFieldsFilled =
     formData.name.trim() &&
     formData.last_name.trim() &&
-    formData.date_of_birth.trim() &&
-    formData.rg.trim() &&
     formData.cpf.trim() &&
     formData.username.trim() &&
     (!editingUser ? formData.password.trim() : true);
@@ -286,7 +283,7 @@ const Users = () => {
       {/* Modal de criação/edição */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+          <div className="bg-white rounded-lg p-6 w-full max-w-3xl mx-4">
             <h2 className="text-xl font-bold text-gray-900 mb-4">
               {editingUser ? "Editar Usuário" : "Novo Usuário"}
             </h2>
@@ -294,7 +291,7 @@ const Users = () => {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-sm font-medium mb-1">Nome</label>
+                  <label className="block text-sm font-medium mb-1">Nome*</label>
                   <input
                     type="text"
                     name="name"
@@ -306,7 +303,7 @@ const Users = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-1">Sobrenome</label>
+                  <label className="block text-sm font-medium mb-1">Sobrenome*</label>
                   <input
                     type="text"
                     name="last_name"
@@ -320,7 +317,7 @@ const Users = () => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-sm font-medium mb-1">CPF</label>
+                  <label className="block text-sm font-medium mb-1">CPF*</label>
                   <input
                     type="text"
                     name="cpf"
@@ -339,7 +336,6 @@ const Users = () => {
                     value={formData.rg}
                     onChange={handleChange}
                     className="w-full px-3 py-2 border rounded-md"
-                    required
                   />
                 </div>
               </div>
@@ -352,12 +348,11 @@ const Users = () => {
                   value={formData.date_of_birth}
                   onChange={handleChange}
                   className="w-full px-3 py-2 border rounded-md"
-                  required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1">Usuário</label>
+                <label className="block text-sm font-medium mb-1">Usuário*</label>
                 <input
                   type="text"
                   name="username"
@@ -370,30 +365,18 @@ const Users = () => {
 
               {!editingUser && (
                 <div>
-                  <label className="block text-sm font-medium mb-1">Senha</label>
+                  <label className="block text-sm font-medium mb-1">Senha*</label>
                   <input
                     type="password"
                     name="password"
                     value={formData.password}
                     onChange={handleChange}
                     className="w-full px-3 py-2 border rounded-md"
+                    minLength={6}
                     required
                   />
                 </div>
               )}
-
-              <div className="flex items-center gap-2">
-                <input
-                  id="admin"
-                  type="checkbox"
-                  name="admin"
-                  checked={formData.admin}
-                  onChange={handleChange}
-                />
-                <label htmlFor="admin" className="text-sm font-medium">
-                  Administrador
-                </label>
-              </div>
 
               <div className="flex justify-end space-x-3 pt-4">
                 <button

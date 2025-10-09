@@ -119,7 +119,7 @@ router.get('/person/:id', authenticate, personController.getById);
  *       500:
  *         description: Erro do servidor.
  */
-router.put('/person/:id', authenticate, createValidationPerson(), personController.update);
+router.put('/person/:id', authenticate, personController.update);
 
 /**
  * @swagger

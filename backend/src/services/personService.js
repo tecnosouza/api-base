@@ -1,8 +1,8 @@
 const AppError = require('@utils/appError');
 const ModelName = 'personService';
-const { Person, sequelize } = require('@models/index.js');
-const DataBaseService = require('../database/services/DataBaseService');
 const bcrypt = require('bcryptjs');
+const DataBaseService = require('../database/services/DataBaseService');
+const { Person, sequelize } = require('@models/index.js');
 const { CreatePersonDTO, UpdatePersonDTO, PersonResponseDTO } = require('@dtos/personDTO');
 const { PaginationDTO } = require('@dtos/paginationDTO');
 const attributes = { exclude: ['created_at', 'updated_at', 'deleted_at'] };

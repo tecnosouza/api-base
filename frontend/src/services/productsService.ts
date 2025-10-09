@@ -42,14 +42,16 @@ export const productsService = {
     return response.data;
   },
 
-  update: async (id: string, data: ProductRequest) => {
+  update: async (id: string, data: Partial<ProductRequest>) => { // Alterado para Partial<ProductRequest>
     const formData = new FormData();
-    formData.append('model', data.model);
-    formData.append('description', data.description);
-    formData.append('values', data.values);
-    formData.append('applications', data.applications);
-    formData.append('is_active', String(data.is_active));
-    formData.append('category_id', String(data.category_id));
+    
+    // Adiciona apenas os campos que estão presentes em data
+    if (data.model !== undefined) formData.append('model', data.model);
+    if (data.description !== undefined) formData.append('description', data.description);
+    if (data.values !== undefined) formData.append('values', data.values);
+    if (data.applications !== undefined) formData.append('applications', data.applications);
+    if (data.is_active !== undefined) formData.append('is_active', String(data.is_active));
+    if (data.category_id !== undefined) formData.append('category_id', String(data.category_id));
     if (data.image) {
       formData.append('image', data.image);
     }
