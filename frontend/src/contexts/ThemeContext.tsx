@@ -3,10 +3,8 @@ import { FontSize, SidebarMode, Theme } from './theme-constants';
 import { getInitialTheme, THEME_STORAGE_KEY } from './theme-utils';
 import ThemeContext from './ThemeContextContext';
 
-import {useTheme} from '../hooks/useTheme';
-
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [theme, setTheme] = useState<Theme>(() => {
+  const [theme, setThemeState] = useState<Theme>(() => {
     const saved = localStorage.getItem(THEME_STORAGE_KEY);
     return (saved as Theme) || 'light';
   });
@@ -47,8 +45,16 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     localStorage.setItem('sidebarMode', sidebarMode);
   }, [sidebarMode]);
 
-  const toggleTheme = () => {
-    setTheme(prev => prev === 'light' ? 'dark' : 'light');
+  const setTheme = (newTheme: Theme) => {
+    setThemeState(newTheme);
+  };
+
+  const toggleTheme = (newTheme?: Theme) => {
+    if (newTheme) {
+      setThemeState(newTheme);
+    } else {
+      setThemeState(prev => prev === 'light' ? 'dark' : 'light');
+    }
   };
 
   const setFontSize = (size: FontSize) => {
@@ -66,6 +72,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       sidebarMode,
       sidebarOpen,
       toggleTheme,
+      setTheme,
       setFontSize,
       setSidebarMode,
       setSidebarOpen

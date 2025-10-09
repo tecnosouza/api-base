@@ -46,13 +46,10 @@ export interface LoginData {
 }
 
 export interface User {
-  cpfCnpj(cpfCnpj: any): string;
-  socialName: string;
-  phone(phone: any): import("react").ReactNode;
-  fullName: string;
+  name: string;
+  role: string;
   id: string;
   email: string;
-  role: string;
   profile?: {
     fullName: string;
     phone: string;

@@ -4,7 +4,7 @@ import { useTheme } from '@/hooks/useTheme';
 
 const SettingsPanel = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { theme, fontSize, sidebarMode, toggleTheme, setFontSize, setSidebarMode } = useTheme();
+  const { theme, fontSize, sidebarMode, toggleTheme, setTheme, setFontSize, setSidebarMode } = useTheme();
   const [isSmallScreen, setIsSmallScreen] = useState(false);
 
   useEffect(() => {
@@ -63,7 +63,7 @@ const SettingsPanel = () => {
                   </label>
                   <div className="flex space-x-2">
                     <button
-                      onClick={toggleTheme}
+                      onClick={() => setTheme('light')}
                       className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
                         theme === 'light' 
                           ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300' 
@@ -74,7 +74,7 @@ const SettingsPanel = () => {
                       <span>Claro</span>
                     </button>
                     <button
-                      onClick={toggleTheme}
+                      onClick={() => setTheme('dark')}
                       className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
                         theme === 'dark' 
                           ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300' 

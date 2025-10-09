@@ -26,7 +26,7 @@ const UserProfile = () => {
   };
 
   // Extraindo nome e role de forma segura
-  const userName = user?.data?.name ? user.data.name.split(" ")[0] : "Carregando...";
+  const userName = user?.name ? user.name.split(" ")[0] : "Carregando...";
   const userRole = user?.role || "";
 
   return (

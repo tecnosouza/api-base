@@ -6,7 +6,8 @@ interface ThemeContextProps {
   fontSize: FontSize;
   sidebarMode: SidebarMode;
   sidebarOpen: boolean;
-  toggleTheme: () => void;
+  toggleTheme: (newTheme?: Theme) => void;
+  setTheme: (theme: Theme) => void;
   setFontSize: (size: FontSize) => void;
   setSidebarMode: (mode: SidebarMode) => void;
   setSidebarOpen: (open: boolean) => void;
@@ -18,6 +19,7 @@ const ThemeContext = createContext<ThemeContextProps>({
   sidebarMode: 'static',
   sidebarOpen: true,
   toggleTheme: () => {},
+  setTheme: () => {},
   setFontSize: () => {},
   setSidebarMode: () => {},
   setSidebarOpen: () => {}
