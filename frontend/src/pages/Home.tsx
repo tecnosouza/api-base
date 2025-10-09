@@ -3,7 +3,7 @@ import logo from '/lovable-uploads/logo-pollimper.png';
 
 const Home: React.FC = () => {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900 -mt-20">
+    <div className="flex flex-col items-center justify-center min-h-screen -mt-20">
       {/* Logo animada e maior */}
       <img
         src={logo}
