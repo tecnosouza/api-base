@@ -102,7 +102,7 @@ const Products = () => {
   }, [toast]);
 
   useEffect(() => {
-    updateParams(memoizedGetApiParams);
+    updateParams(memoizedGetApiParams());
   }, [memoizedGetApiParams, updateParams]);
 
   const handleNew = () => {
@@ -322,10 +322,10 @@ const Products = () => {
         error={error}
         pagination={
           paginationData && {
-            currentPage: paginationData.page,
+            currentPage: Number(paginationData.page),
             totalPages: paginationData.last_page, // Corrigido para last_page
             totalItems: paginationData.total,
-            itemsPerPage: paginationData.limit,
+            itemsPerPage: Number(paginationData.limit),
             limitOptions,
             onPageChange: updatePage,
             onLimitChange: updateLimit,

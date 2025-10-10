@@ -1,5 +1,20 @@
 
 import api, { PaginationParams } from './api';
+export interface PersonRequest {
+  name: string;
+  last_name: string;
+  date_of_birth: string;
+  rg?: string;
+  cpf: string;
+  street: string;
+  number: string;
+  neighborhood: string;
+  city: string;
+  state: string;
+  username: string;
+  password: string;
+  admin?: boolean;
+}
 
 export interface User {
   id: string;

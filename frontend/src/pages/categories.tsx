@@ -11,7 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 
 // Interface representando o tipo de dado de uma categoria
 interface Category {
-  id?: number;
+  id?: string;
   title_menu: string;
   title: string;
   description: string;
@@ -77,7 +77,7 @@ const Categories = () => {
 
   // Atualiza os parâmetros sempre que o estado da tabela mudar
   useEffect(() => {
-    updateParams(memoizedGetApiParams);
+    updateParams(memoizedGetApiParams());
   }, [memoizedGetApiParams, updateParams]);
 
   // === HANDLERS DE AÇÕES ===
@@ -155,7 +155,7 @@ const Categories = () => {
     try {
       if (editingCategory) {
         // Apenas envia os campos alterados
-        const updatedFields: Partial<Category> = {};
+        const updatedFields: Record<string, any> = {};
         Object.keys(formData).forEach((key) => {
           if (formData[key as keyof Category] !== initialData?.[key as keyof Category]) {
             updatedFields[key as keyof Category] = formData[key as keyof Category];
@@ -187,7 +187,8 @@ const Categories = () => {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value, type } = e.target;
+    const checked = type === "checkbox" ? (e.target as HTMLInputElement).checked : undefined;
     setFormData((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
@@ -296,8 +297,8 @@ const Categories = () => {
         error={error}
         pagination={
           paginationData && {
-            currentPage: paginationData.page,
-            totalPages: paginationData.totalPages,
+            currentPage: Number(paginationData.page),
+            totalPages: paginationData.last_page,
             totalItems: paginationData.total,
             itemsPerPage: paginationData.limit,
             limitOptions,

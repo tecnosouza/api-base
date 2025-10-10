@@ -8,9 +8,10 @@ import { Eye, Plus, Trash } from "lucide-react";
 import FormatDate from "@/components/ui/format-date";
 import { useToast } from "@/hooks/use-toast";
 import { personsService } from "@/services/personsService";
+import { PersonRequest } from "@/services/personsService";
 
 interface User {
-  id?: number;
+  id?: string;
   admin: boolean;
   name: string;
   last_name: string;
@@ -71,7 +72,7 @@ const Users = () => {
   });
 
   useEffect(() => {
-    updateParams(memoizedGetApiParams);
+    updateParams(memoizedGetApiParams());
   }, [memoizedGetApiParams, updateParams]);
 
   const handleNew = () => {
@@ -160,7 +161,7 @@ const Users = () => {
     e.preventDefault();
     try {
       if (editingUser) {
-        const updatedFields: Partial<User> = {};
+        const updatedFields: Record<string, any> = {};
 
         Object.keys(formData).forEach((key) => {
           const value = formData[key as keyof User];
@@ -174,11 +175,11 @@ const Users = () => {
           }
         });
 
-        await personsService.update(editingUser.id!, updatedFields);
+        await personsService.update(editingUser.id!.toString(), updatedFields);
         toast({ title: "Sucesso", description: "Usuário atualizado com sucesso!" });
       } else {
         // 🔹 Criação — senha é obrigatória
-        await personsService.create(formData);
+        await personsService.create(formData as PersonRequest);
         toast({ title: "Sucesso", description: "Usuário criado com sucesso!" });
       }
 
@@ -198,7 +199,8 @@ const Users = () => {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value, type } = e.target;
+    const checked = type === "checkbox" ? (e.target as HTMLInputElement).checked : undefined;
     setFormData((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
@@ -219,7 +221,7 @@ const Users = () => {
       render: (_, row: User) => (
         <StatusBadge
           status={row.admin ? "Administrador" : "Usuário comum"}
-          variant={row.admin ? "success" : "default"}
+          variant={row.admin ? "success" : "info"}
         />
       ),
     },
@@ -285,8 +287,8 @@ const Users = () => {
         error={error}
         pagination={
           paginationData && {
-            currentPage: paginationData.page,
-            totalPages: paginationData.totalPages,
+            currentPage: Number(paginationData.page),
+            totalPages: paginationData.last_page,
             totalItems: paginationData.total,
             itemsPerPage: paginationData.limit,
             limitOptions,
