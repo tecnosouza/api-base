@@ -1,14 +1,7 @@
 
-import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import Header from "@/components/Header";
 import { useEffect, useState } from "react";
-import {
-  Handshake,
-  HeartHandshake,
-  Star,
-  BadgeCheck,
-  Scale,
-} from "lucide-react";
 const SobreNos = () => {
 
   const [isMobile, setIsMobile] = useState(false);

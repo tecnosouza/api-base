@@ -2,9 +2,9 @@ import { Button } from "@/components/ui/button";
 
 const ServicesIntroSection = () => {
   return (
-    <section className="py-0 bg-white relative overflow-hidden min-h-screen">
+    <section className="py-0 bg-white relative overflow-hidden">
       <div className="w-full bg-[#002F6C]">
-  <div className="grid lg:grid-cols-10 bg-[#002F6C] gap-0 overflow-hidden max-w-[1200px] mx-auto">
+        <div className="grid lg:grid-cols-10 bg-[#002F6C] gap-0 overflow-hidden max-w-[1200px] mx-auto">
           {/* Left content - Blue background */}
           <div className="lg:col-span-6 text-white py-20 px-4 lg:pl-24 lg:pr-16 flex flex-col justify-center relative">
             <h2 className="text-5xl lg:text-6xl font-bold mb-12" style={{ color: '#6CD400' }}>

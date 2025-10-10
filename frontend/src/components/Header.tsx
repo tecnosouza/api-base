@@ -17,6 +17,7 @@ const Header = ({ transparent = false }) => {
 
   const navLinks = [
     { path: "/", label: "Home" },
+    { path: "/sobre-nos", label: "Sobre nós" },
     { label: "Atuação", icon: <ChevronDown className="w-3 h-3 ml-1" /> },
     { label: "Nossa loja", icon: <ChevronDown className="w-3 h-3 ml-1" /> },
     { path: "/contato", label: "Contato" },
