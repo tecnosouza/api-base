@@ -1,5 +1,5 @@
+/* eslint-disable no-unused-vars */
 const AppError = require('@utils/appError');
-const ModelName = 'productService';
 const DataBaseService = require('../database/services/DataBaseService');
 const { ProductsResponseDTO, SiteProductsResponseDTO } = require('@dtos/productsResponseDTO');
 const { PaginationDTO } = require('@dtos/paginationDTO');
