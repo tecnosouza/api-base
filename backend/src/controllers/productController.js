@@ -34,7 +34,7 @@ exports.getById = async (req, res, next) => {
 
 exports.update = async (req, res, next) => {
     try {
-        const product = await productService.update(req.params.id, req.body);
+        const product = await productService.update(req.params.id, req);
         if (!product) {
             return successResponse(res, 'Produto não encontrado.', null, 404);
         }

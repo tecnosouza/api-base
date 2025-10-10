@@ -6,6 +6,7 @@ const { PaginationDTO } = require('@dtos/paginationDTO');
 const { Product, Category, sequelize } = require('@models/index.js');
 const { moveFile, deleteFile } = require('../utils/fileUtils.js');
 const path = require('path');
+const fs = require('fs');
 
 exports.create = async (req) => {
     const transaction = await sequelize.transaction();
@@ -109,41 +110,107 @@ exports.getById = async (id) => {
     return product;
 };
 
-exports.update = async (id, productData) => {
+exports.update = async (id, req) => {
     const transaction = await sequelize.transaction();
+    const file = req.file;
+    const tmpFilePath = file ? path.join(__dirname, '../../', file.path) : null;
+
     try {
+        const { model, description, values, applications, category_id } = req.body;
+
+        // Busca produto existente
         let product = await Product.findByPk(id, { transaction });
         if (!product) {
             await transaction.rollback();
-            return null;
+            throw new AppError('Produto não encontrado.', {
+                statusCode: 404,
+                sourceModel: 'Product',
+                saveDB: false,
+            });
         }
 
-        const { model } = productData;
+        // Usa o category_id atual se não for enviado no body
+        const finalCategoryId = category_id || product.category_id;
 
+        // Verifica duplicidade de model (exceto se for o mesmo produto)
         if (model && model !== product.model) {
             const existingProduct = await Product.findOne({ where: { model }, transaction });
             if (existingProduct) {
                 await transaction.rollback();
-                throw new AppError(
-                    'Produto já cadastrado!',
-                    {
-                        statusCode: 409,
-                        sourceModel: ModelName,
-                        saveDB: true,
-                    }
-                );
+                throw new AppError('Produto já cadastrado!', {
+                    statusCode: 409,
+                    sourceModel: 'Product',
+                    saveDB: true,
+                });
             }
         }
 
-        await product.update(productData, { transaction });
-        await transaction.commit();
-        if (!product) {
-            throw new AppError('Produto não encontrado.', { statusCode: 404, sourceModel: 'Product', saveDB: false });
+        let imageName = product.photo_name;
+        let imageSize = product.photo_size;
+        let imageLink = product.photo_link;
+
+        // Se veio novo arquivo → remove o antigo e move o novo
+        if (file) {
+            imageName = file.filename;
+            imageSize = file.size;
+
+            const newDir = path.join(__dirname, '../../uploads', finalCategoryId.toString());
+            const newPath = path.join(newDir, file.filename);
+
+            // Cria a pasta se não existir
+            if (!fs.existsSync(newDir)) {
+                fs.mkdirSync(newDir, { recursive: true });
+            }
+
+            // Remove imagem antiga, se existir
+            if (product.photo_name) {
+                const oldPath = path.join(
+                    __dirname,
+                    '../../uploads',
+                    product.category_id.toString(),
+                    product.photo_name
+                );
+
+                // Evita erro se o arquivo não existir mais
+                try {
+                    await deleteFile(oldPath);
+                } catch (err) {
+                    console.warn('⚠️ Arquivo antigo não encontrado para remoção:', oldPath);
+                }
+            }
+
+            // Move o novo arquivo
+            await moveFile(file.path, newPath);
+
+            // Atualiza o link final da nova imagem
+            imageLink = `${req.protocol}://${req.get('host')}/uploads/${finalCategoryId}/${file.filename}`;
         }
+
+        // Atualiza os dados do produto
+        await product.update(
+            {
+                model: model ?? product.model,
+                category_id: finalCategoryId,
+                description: description ?? product.description,
+                values: values ?? product.values,
+                applications: applications ?? product.applications,
+                photo_name: imageName,
+                photo_size: imageSize,
+                photo_link: imageLink,
+            },
+            { transaction }
+        );
+
+        await transaction.commit();
         return product;
     } catch (error) {
         await transaction.rollback();
         throw error;
+    } finally {
+        // Sempre remove o tmp
+        if (tmpFilePath) {
+            await deleteFile(tmpFilePath);
+        }
     }
 };
 

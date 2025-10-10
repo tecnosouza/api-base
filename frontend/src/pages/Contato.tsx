@@ -130,7 +130,20 @@ const Contato = () => {
                   </li>
                   <li>
                     <strong>RH (envie seu currículo):</strong> <br />
-                    aguardando envio
+                    (11) 98959-7954
+                  </li>
+                  <li>
+                    Valorizamos a ética e a integridade em todas as nossas ações, guiados pelo nosso Código de Ética.
+                    Baixe o código e conheça as diretrizes que fortalecem como trabalhamos. <br />
+                    <a
+                      href="/arquivos/codigo_conduta.pdf"
+                      target="_blank"
+                      rel="noopener"
+                      download="codigo_conduta.pdf"
+                      style={{ color: "#007BFF", textDecoration: "underline" }}
+                    >
+                      Baixar Código de Conduta (PDF)
+                    </a>
                   </li>
                 </ul>
               </div>
