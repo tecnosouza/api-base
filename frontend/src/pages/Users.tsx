@@ -96,7 +96,7 @@ const Users = () => {
       admin: user.admin,
       name: user.name,
       last_name: user.last_name,
-      date_of_birth: user.date_of_birth,
+      date_of_birth: user.date_of_birth ? user.date_of_birth.split("T")[0] : "",
       rg: user.rg,
       cpf: user.cpf,
       username: user.username,
@@ -107,6 +107,23 @@ const Users = () => {
   };
 
   const handleDeleteClick = (user: User) => {
+    const userData = localStorage.getItem("user_data");
+
+    if (userData) {
+      const parsed = JSON.parse(userData);
+      const loggedUser = parsed?.data; // ✅ pega o objeto real do usuário
+
+      // 🚫 Impede o usuário de se autoexcluir
+      if (loggedUser?.id === user.id) {
+        toast({
+          title: "Ação não permitida",
+          description: "Você não pode excluir o seu próprio usuário.",
+          color: "warning",
+        });
+        return;
+      }
+    }
+
     setUserToDelete(user);
     setShowDeleteModal(true);
   };
@@ -144,15 +161,23 @@ const Users = () => {
     try {
       if (editingUser) {
         const updatedFields: Partial<User> = {};
+
         Object.keys(formData).forEach((key) => {
-          if (formData[key as keyof User] !== initialData?.[key as keyof User]) {
-            updatedFields[key as keyof User] = formData[key as keyof User];
+          const value = formData[key as keyof User];
+          const initialValue = initialData?.[key as keyof User];
+
+          // 🔹 Ignora senha vazia
+          if (key === "password" && !value) return;
+
+          if (value !== initialValue) {
+            updatedFields[key as keyof User] = value;
           }
         });
 
         await personsService.update(editingUser.id!, updatedFields);
         toast({ title: "Sucesso", description: "Usuário atualizado com sucesso!" });
       } else {
+        // 🔹 Criação — senha é obrigatória
         await personsService.create(formData);
         toast({ title: "Sucesso", description: "Usuário criado com sucesso!" });
       }
@@ -282,122 +307,191 @@ const Users = () => {
 
       {/* Modal de criação/edição */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-3xl mx-4">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+          <div className="modern-card w-full max-w-3xl mx-4 animate-scale-in text-foreground">
+            <h2 className="text-xl font-semibold text-foreground mb-6">
               {editingUser ? "Editar Usuário" : "Novo Usuário"}
             </h2>
 
             <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Linha 1 */}
               <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-sm font-medium mb-1">Nome*</label>
+                <div className="space-y-2">
+                  <label
+                    htmlFor="name"
+                    className="text-sm font-medium text-foreground"
+                  >
+                    Nome *
+                  </label>
                   <input
-                    type="text"
+                    id="name"
                     name="name"
+                    type="text"
                     value={formData.name}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border rounded-md"
+                    className="w-full rounded-lg border border-border bg-input text-foreground px-3 py-2
+                         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
+                         transition-all placeholder:text-muted-foreground"
+                    placeholder="Digite o nome"
                     required
                   />
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium mb-1">Sobrenome*</label>
+                <div className="space-y-2">
+                  <label
+                    htmlFor="last_name"
+                    className="text-sm font-medium text-foreground"
+                  >
+                    Sobrenome *
+                  </label>
                   <input
-                    type="text"
+                    id="last_name"
                     name="last_name"
+                    type="text"
                     value={formData.last_name}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border rounded-md"
+                    className="w-full rounded-lg border border-border bg-input text-foreground px-3 py-2
+                         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
+                         transition-all placeholder:text-muted-foreground"
+                    placeholder="Digite o sobrenome"
                     required
                   />
                 </div>
               </div>
 
+              {/* Linha 2 */}
               <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-sm font-medium mb-1">CPF*</label>
+                <div className="space-y-2">
+                  <label
+                    htmlFor="cpf"
+                    className="text-sm font-medium text-foreground"
+                  >
+                    CPF *
+                  </label>
                   <input
-                    type="text"
+                    id="cpf"
                     name="cpf"
+                    type="text"
                     value={formData.cpf}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border rounded-md"
+                    className="w-full rounded-lg border border-border bg-input text-foreground px-3 py-2
+                         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
+                         transition-all placeholder:text-muted-foreground"
+                    placeholder="Digite o CPF"
                     required
                   />
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium mb-1">RG</label>
+                <div className="space-y-2">
+                  <label
+                    htmlFor="rg"
+                    className="text-sm font-medium text-foreground"
+                  >
+                    RG
+                  </label>
                   <input
-                    type="text"
+                    id="rg"
                     name="rg"
+                    type="text"
                     value={formData.rg}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border rounded-md"
+                    className="w-full rounded-lg border border-border bg-input text-foreground px-3 py-2
+                         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
+                         transition-all placeholder:text-muted-foreground"
+                    placeholder="Digite o RG"
                   />
                 </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-1">Data de Nascimento</label>
+              {/* Data de nascimento */}
+              <div className="space-y-2">
+                <label
+                  htmlFor="date_of_birth"
+                  className="text-sm font-medium text-foreground"
+                >
+                  Data de Nascimento
+                </label>
                 <input
-                  type="date"
+                  id="date_of_birth"
                   name="date_of_birth"
+                  type="date"
                   value={formData.date_of_birth}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border rounded-md"
+                  className="w-full rounded-lg border border-border bg-input text-foreground px-3 py-2
+                       focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
+                       transition-all"
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-1">Usuário*</label>
+              {/* Usuário */}
+              <div className="space-y-2">
+                <label
+                  htmlFor="username"
+                  className="text-sm font-medium text-foreground"
+                >
+                  Usuário *
+                </label>
                 <input
-                  type="text"
+                  id="username"
                   name="username"
+                  type="text"
                   value={formData.username}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border rounded-md"
+                  className="w-full rounded-lg border border-border bg-input text-foreground px-3 py-2
+                       focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
+                       transition-all placeholder:text-muted-foreground"
+                  placeholder="Digite o usuário"
                   required
                 />
               </div>
 
+              {/* Senha (somente para novo usuário) */}
               {!editingUser && (
-                <div>
-                  <label className="block text-sm font-medium mb-1">Senha*</label>
+                <div className="space-y-2">
+                  <label
+                    htmlFor="password"
+                    className="text-sm font-medium text-foreground"
+                  >
+                    Senha *
+                  </label>
                   <input
-                    type="password"
+                    id="password"
                     name="password"
+                    type="password"
                     value={formData.password}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border rounded-md"
+                    className="w-full rounded-lg border border-border bg-input text-foreground px-3 py-2
+                         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
+                         transition-all placeholder:text-muted-foreground"
+                    placeholder="Digite a senha"
                     minLength={6}
                     required
                   />
                 </div>
               )}
 
+              {/* Botões */}
               <div className="flex justify-end space-x-3 pt-4">
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="px-4 py-2 text-gray-700 border rounded-md hover:bg-gray-50"
+                  className="px-4 py-2 rounded-lg border border-border bg-muted text-muted-foreground 
+                       hover:bg-muted/70 transition-colors"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={editingUser ? !hasChanges : !allFieldsFilled}
-                  className={`px-4 py-2 rounded-md text-white ${
-                    editingUser
+                  className={`px-4 py-2 rounded-lg text-white font-medium transition-colors
+              ${editingUser
                       ? hasChanges
-                        ? "bg-blue-600 hover:bg-blue-700"
-                        : "bg-blue-300 cursor-not-allowed"
+                        ? "bg-primary hover:bg-primary/90"
+                        : "bg-muted cursor-not-allowed text-muted-foreground"
                       : allFieldsFilled
-                      ? "bg-blue-600 hover:bg-blue-700"
-                      : "bg-blue-300 cursor-not-allowed"
-                  }`}
+                        ? "bg-primary hover:bg-primary/90"
+                        : "bg-muted cursor-not-allowed text-muted-foreground"
+                    }`}
                 >
                   Salvar
                 </button>
@@ -407,27 +501,36 @@ const Users = () => {
         </div>
       )}
 
+
       {/* Modal de exclusão */}
       {showDeleteModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60]">
-          <div className="bg-white rounded-lg p-6 w-full max-w-sm mx-4">
-            <h2 className="text-lg font-semibold mb-4 text-gray-800">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[60]">
+          <div className="modern-card w-full max-w-sm mx-4 text-foreground animate-scale-in">
+            <h2 className="text-lg font-semibold mb-4 text-foreground">
               Confirmar exclusão
             </h2>
-            <p className="text-sm text-gray-600 mb-6">
+
+            <p className="text-sm text-muted-foreground mb-6">
               Tem certeza que deseja excluir o usuário{" "}
-              <strong>{userToDelete?.name} {userToDelete?.last_name}</strong>?
+              <strong className="text-foreground">
+                {userToDelete?.name} {userToDelete?.last_name}
+              </strong>
+              ?
             </p>
+
             <div className="flex justify-end space-x-3">
               <button
                 onClick={() => setShowDeleteModal(false)}
-                className="px-4 py-2 text-gray-700 border rounded-md hover:bg-gray-50"
+                className="px-4 py-2 rounded-lg border border-border bg-muted text-muted-foreground 
+                     hover:bg-muted/70 transition-colors"
               >
                 Cancelar
               </button>
+
               <button
                 onClick={confirmDelete}
-                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+                className="px-4 py-2 rounded-lg font-medium text-white bg-destructive 
+                     hover:bg-destructive/90 transition-colors"
               >
                 Confirmar
               </button>
@@ -435,6 +538,7 @@ const Users = () => {
           </div>
         </div>
       )}
+
     </div>
   );
 };

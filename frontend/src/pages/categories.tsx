@@ -318,54 +318,79 @@ const Categories = () => {
 
       {/* Modal de criação/edição */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-3xl mx-4">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">
-              {editingCategory ? "Editar Categoria" : "Nova Categoria"}
-            </h2>
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+          <div className="bg-card rounded-2xl p-6 w-full max-w-3xl mx-4 max-h-[90vh] overflow-y-auto animate-scale-in">
+            <div className="flex justify-between items-center mb-6 sticky top-0 bg-card">
+              <h2 className="text-xl font-semibold text-foreground">
+                {editingCategory ? "Editar Categoria" : "Nova Categoria"}
+              </h2>
+              <button
+                onClick={() => setShowModal(false)}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                X
+              </button>
+            </div>
 
-            {/* Formulário de criação/edição */}
             <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Campo: Categoria no menu */}
-              <div>
-                <label className="block text-sm font-medium mb-1">Categoria no menu</label>
+              {/* Categoria no menu */}
+              <div className="space-y-2">
+                <label htmlFor="title_menu" className="text-sm font-medium text-foreground">
+                  Categoria no menu *
+                </label>
                 <input
-                  type="text"
+                  id="title_menu"
                   name="title_menu"
+                  type="text"
                   value={formData.title_menu}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border rounded-md"
+                  className="w-full rounded-lg border border-border bg-input text-foreground px-3 py-2
+              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
+              transition-all placeholder:text-muted-foreground"
+                  placeholder="Digite a categoria no menu"
                   required
                 />
               </div>
 
-              {/* Campo: Texto da página */}
-              <div>
-                <label className="block text-sm font-medium mb-1">Texto da página</label>
+              {/* Texto da página */}
+              <div className="space-y-2">
+                <label htmlFor="title" className="text-sm font-medium text-foreground">
+                  Texto da página *
+                </label>
                 <input
-                  type="text"
+                  id="title"
                   name="title"
+                  type="text"
                   value={formData.title}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border rounded-md"
+                  className="w-full rounded-lg border border-border bg-input text-foreground px-3 py-2
+              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
+              transition-all placeholder:text-muted-foreground"
+                  placeholder="Digite o texto da página"
                   required
                 />
               </div>
 
-              {/* Campo: Descrição */}
-              <div>
-                <label className="block text-sm font-medium mb-1">Descrição</label>
+              {/* Descrição */}
+              <div className="space-y-2">
+                <label htmlFor="description" className="text-sm font-medium text-foreground">
+                  Descrição *
+                </label>
                 <textarea
+                  id="description"
                   name="description"
                   value={formData.description}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border rounded-md"
+                  className="w-full rounded-lg border border-border bg-input text-foreground px-3 py-2
+              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
+              transition-all placeholder:text-muted-foreground"
                   rows={3}
+                  placeholder="Digite a descrição"
                   required
                 />
               </div>
 
-              {/* Checkbox: Ativo */}
+              {/* Checkbox ativo */}
               <div className="flex items-center gap-2">
                 <input
                   id="is_active"
@@ -373,33 +398,35 @@ const Categories = () => {
                   name="is_active"
                   checked={formData.is_active}
                   onChange={handleChange}
+                  className="h-4 w-4 rounded border-border text-primary focus:ring-primary"
                 />
-                <label htmlFor="is_active" className="text-sm font-medium">
+                <label htmlFor="is_active" className="text-sm font-medium text-foreground">
                   Ativo
                 </label>
               </div>
 
-              {/* Botões de ação do modal */}
+              {/* Botões do modal */}
               <div className="flex justify-end space-x-3 pt-4">
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="px-4 py-2 text-gray-700 border rounded-md hover:bg-gray-50"
+                  className="px-4 py-2 rounded-lg border border-border bg-muted text-muted-foreground
+              hover:bg-muted/70 transition-colors"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={editingCategory ? !hasChanges : !allFieldsFilled}
-                  className={`px-4 py-2 rounded-md text-white ${
-                    editingCategory
+                  className={`px-4 py-2 rounded-lg text-white font-medium transition-colors
+              ${editingCategory
                       ? hasChanges
-                        ? "bg-blue-600 hover:bg-blue-700"
-                        : "bg-blue-300 cursor-not-allowed"
+                        ? "bg-primary hover:bg-primary/90"
+                        : "bg-muted cursor-not-allowed text-muted-foreground"
                       : allFieldsFilled
-                      ? "bg-blue-600 hover:bg-blue-700"
-                      : "bg-blue-300 cursor-not-allowed"
-                  }`}
+                        ? "bg-primary hover:bg-primary/90"
+                        : "bg-muted cursor-not-allowed text-muted-foreground"
+                    }`}
                 >
                   Salvar
                 </button>
@@ -409,27 +436,28 @@ const Categories = () => {
         </div>
       )}
 
-      {/* Modal de confirmação de exclusão */}
+      {/* Modal de exclusão */}
       {showDeleteModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60]">
-          <div className="bg-white rounded-lg p-6 w-full max-w-sm mx-4">
-            <h2 className="text-lg font-semibold mb-4 text-gray-800">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[60]">
+          <div className="rounded-2xl p-6 w-full max-w-sm mx-4 animate-scale-in">
+            <h2 className="text-lg font-semibold mb-4 text-foreground">
               Confirmar exclusão
             </h2>
-            <p className="text-sm text-gray-600 mb-6">
+            <p className="text-sm text-muted-foreground mb-6">
               Tem certeza que deseja excluir a categoria{" "}
-              <strong>{categoryToDelete?.title_menu}</strong>?
+              <strong className="text-foreground">{categoryToDelete?.title_menu}</strong>?
             </p>
             <div className="flex justify-end space-x-3">
               <button
                 onClick={() => setShowDeleteModal(false)}
-                className="px-4 py-2 text-gray-700 border rounded-md hover:bg-gray-50"
+                className="px-4 py-2 rounded-lg border border-border bg-muted text-muted-foreground
+            hover:bg-muted/70 transition-colors"
               >
                 Cancelar
               </button>
               <button
                 onClick={confirmDelete}
-                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+                className="px-4 py-2 rounded-lg bg-destructive text-white hover:bg-destructive/90 transition-colors"
               >
                 Confirmar
               </button>
@@ -437,6 +465,7 @@ const Categories = () => {
           </div>
         </div>
       )}
+
     </div>
   );
 };

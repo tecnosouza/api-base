@@ -1,16 +1,17 @@
+import { useTheme } from "@/hooks/useTheme";
+import {
+  ChevronLeft,
+  FileText,
+  Home,
+  Menu,
+  PackageSearch,
+  User,
+  X
+} from "lucide-react";
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { useTheme } from "@/hooks/useTheme";
 import UserProfile from "./UserProfile";
-import {
-  FileText,
-  User,
-  Menu,
-  X,
-  ChevronLeft,
-  CreditCardIcon,
-  Home,
-} from "lucide-react";
+
 
 const Sidebar = () => {
   const { sidebarMode, sidebarOpen, setSidebarOpen } = useTheme();
@@ -19,9 +20,9 @@ const Sidebar = () => {
   
   const menuItems = [
     { icon: Home, label: "Home", path: "/home", color: "text-blue-600" },
-    { icon: CreditCardIcon, label: "Usuários", path: "/users", color: "text-purple-600" },
+    { icon: User, label: "Usuários", path: "/users", color: "text-purple-600" },
     { icon: FileText, label: "Categorias", path: "/categories", color: "text-green-600" },
-    { icon: CreditCardIcon, label: "Produtos", path: "/products", color: "text-purple-600" }
+    { icon: PackageSearch, label: "Produtos", path: "/products", color: "text-purple-600" }
   ]
 
   const isActive = (path: string) => location.pathname === path;

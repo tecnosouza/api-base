@@ -265,7 +265,7 @@ const Products = () => {
       render: (_, row: Product) => (
         <span>{row.category.title_menu}</span>
       ),
-    },    
+    },
     { key: "model", label: "Modelo", filterable: true, sortable: true },
     { key: "description", label: "Descrição", filterable: true, sortable: true },
     {
@@ -344,21 +344,30 @@ const Products = () => {
 
       {/* Modal de criação/edição */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-3xl mx-4">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">
-              {editingProduct ? "Editar Produto" : "Novo Produto"}
-            </h2>
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+          <div className="bg-card rounded-2xl p-6 w-full max-w-3xl mx-4 max-h-[90vh] overflow-y-auto animate-scale-in">
+            <div className="flex justify-between items-center mb-6 sticky top-0 bg-card z-10">
+              <h2 className="text-xl font-semibold text-foreground">
+                {editingProduct ? "Editar Produto" : "Novo Produto"}
+              </h2>
+              <button
+                onClick={() => setShowModal(false)}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                X
+              </button>
+            </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Campo: Categoria */}
-              <div>
-                <label className="block text-sm font-medium mb-1">Categoria</label>
+              {/* Categoria */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground">Categoria *</label>
                 <select
                   name="category_id"
                   value={formData.category_id ?? ""}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border rounded-md"
+                  className="w-full rounded-lg border border-border bg-input text-foreground px-3 py-2
+              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-all"
                   required
                 >
                   <option value="">Selecione uma categoria</option>
@@ -370,62 +379,76 @@ const Products = () => {
                 </select>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-1">Modelo</label>
+              {/* Modelo */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground">Modelo *</label>
                 <input
                   type="text"
                   name="model"
                   value={formData.model}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border rounded-md"
+                  className="w-full rounded-lg border border-border bg-input text-foreground px-3 py-2
+              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-all"
                   required
                 />
               </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Descrição</label>
+
+              {/* Descrição */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground">Descrição *</label>
                 <input
                   type="text"
                   name="description"
                   value={formData.description}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border rounded-md"
+                  className="w-full rounded-lg border border-border bg-input text-foreground px-3 py-2
+              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-all"
                   required
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-1">Valores</label>
+              {/* Valores */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground">Valores *</label>
                 <textarea
                   name="values"
                   value={formData.values}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border rounded-md"
                   rows={3}
+                  className="w-full rounded-lg border border-border bg-input text-foreground px-3 py-2
+              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-all"
                   required
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-1">Aplicações</label>
-                <textarea                  
+              {/* Aplicações */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground">Aplicações *</label>
+                <textarea
                   name="applications"
                   value={formData.applications}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border rounded-md"
                   rows={3}
+                  className="w-full rounded-lg border border-border bg-input text-foreground px-3 py-2
+              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-all"
                   required
                 />
               </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Imagem do Produto</label>
+
+              {/* Imagem */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground">Imagem do Produto</label>
                 <input
                   type="file"
                   name="image"
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border rounded-md"
                   accept="image/*"
+                  className="w-full rounded-lg border border-border bg-input text-foreground px-3 py-2
+              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-all"
                 />
               </div>
+
+              {/* Checkbox ativo */}
               <div className="flex items-center gap-2">
                 <input
                   id="is_active"
@@ -433,30 +456,34 @@ const Products = () => {
                   name="is_active"
                   checked={formData.is_active}
                   onChange={handleChange}
+                  className="h-4 w-4 rounded border-border text-primary focus:ring-primary"
                 />
-                <label htmlFor="is_active" className="text-sm font-medium">
+                <label htmlFor="is_active" className="text-sm font-medium text-foreground">
                   Ativo
                 </label>
               </div>
 
+              {/* Botões */}
               <div className="flex justify-end space-x-3 pt-4">
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="px-4 py-2 text-gray-700 border rounded-md hover:bg-gray-50"
+                  className="px-4 py-2 rounded-lg border border-border bg-muted text-muted-foreground
+              hover:bg-muted/70 transition-colors"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={editingProduct ? !hasChanges : !allFieldsFilled}
-                  className={`px-4 py-2 rounded-md text-white ${editingProduct
-                    ? hasChanges
-                      ? "bg-blue-600 hover:bg-blue-700"
-                      : "bg-blue-300 cursor-not-allowed"
-                    : allFieldsFilled
-                      ? "bg-blue-600 hover:bg-blue-700"
-                      : "bg-blue-300 cursor-not-allowed"
+                  className={`px-4 py-2 rounded-lg text-white font-medium transition-colors
+              ${editingProduct
+                      ? hasChanges
+                        ? "bg-primary hover:bg-primary/90"
+                        : "bg-muted cursor-not-allowed text-muted-foreground"
+                      : allFieldsFilled
+                        ? "bg-primary hover:bg-primary/90"
+                        : "bg-muted cursor-not-allowed text-muted-foreground"
                     }`}
                 >
                   Salvar
@@ -469,25 +496,24 @@ const Products = () => {
 
       {/* Modal de exclusão */}
       {showDeleteModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60]">
-          <div className="bg-white rounded-lg p-6 w-full max-w-sm mx-4">
-            <h2 className="text-lg font-semibold mb-4 text-gray-800">
-              Confirmar exclusão
-            </h2>
-            <p className="text-sm text-gray-600 mb-6">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[60]">
+          <div className="bg-card rounded-2xl p-6 w-full max-w-sm mx-4 animate-scale-in">
+            <h2 className="text-lg font-semibold mb-4 text-foreground">Confirmar exclusão</h2>
+            <p className="text-sm text-muted-foreground mb-6">
               Tem certeza que deseja excluir o produto{" "}
-              <strong>{productToDelete?.model}</strong>?
+              <strong className="text-foreground">{productToDelete?.model}</strong>?
             </p>
             <div className="flex justify-end space-x-3">
               <button
                 onClick={() => setShowDeleteModal(false)}
-                className="px-4 py-2 text-gray-700 border rounded-md hover:bg-gray-50"
+                className="px-4 py-2 rounded-lg border border-border bg-muted text-muted-foreground
+            hover:bg-muted/70 transition-colors"
               >
                 Cancelar
               </button>
               <button
                 onClick={confirmDelete}
-                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+                className="px-4 py-2 rounded-lg bg-destructive text-white hover:bg-destructive/90 transition-colors"
               >
                 Confirmar
               </button>
