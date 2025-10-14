@@ -49,6 +49,10 @@ module.exports = {
                 type: Sequelize.STRING,
                 allowNull: true,
             },
+            price: {
+                type: Sequelize.FLOAT,
+                allowNull: true,
+            },
             is_active: {
                 type: Sequelize.BOOLEAN,
                 defaultValue: true,

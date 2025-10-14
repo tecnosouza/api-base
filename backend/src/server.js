@@ -15,6 +15,7 @@ const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const CORS_ORIGIN = process.env.CORS_ORIGIN || '*';
 
 // Cria pasta de database se necessário (para SQLite)
 const dbPath = path.resolve(__dirname, 'database');
@@ -33,7 +34,7 @@ if (!fs.existsSync(uploadPath)) {
 // Middleware básicos
 app.set('trust proxy', 1);
 app.use(cors({
-    origin: '*',
+    origin: CORS_ORIGIN,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],

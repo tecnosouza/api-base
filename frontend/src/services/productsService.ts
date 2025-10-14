@@ -4,6 +4,7 @@ export interface ProductRequest {
   model: string;
   description: string;
   values: string;
+  price: number;
   applications: string;
   is_active: boolean | string;
   category_id: string | number;
@@ -29,6 +30,7 @@ export const productsService = {
     formData.append('model', data.model);
     formData.append('description', data.description);
     formData.append('values', data.values);
+    formData.append('price', data.price);
     formData.append('applications', data.applications);
     formData.append('is_active', String(data.is_active));
     formData.append('category_id', String(data.category_id));
@@ -49,6 +51,7 @@ export const productsService = {
     if (data.model !== undefined) formData.append('model', data.model);
     if (data.description !== undefined) formData.append('description', data.description);
     if (data.values !== undefined) formData.append('values', data.values);
+    if (data.price !== undefined) formData.append('price', String(data.price));
     if (data.applications !== undefined) formData.append('applications', data.applications);
     if (data.is_active !== undefined) formData.append('is_active', String(data.is_active));
     if (data.category_id !== undefined) formData.append('category_id', String(data.category_id));

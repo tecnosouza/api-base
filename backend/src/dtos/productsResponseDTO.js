@@ -5,6 +5,7 @@ class ProductsResponseDTO {
         this.model = product.model;
         this.description = product.description;
         this.values = product.values;
+        this.price = product.price;
         this.applications = product.applications;
         this.photo_name = product.photo_name;
         this.photo_size = product.photo_size;
@@ -30,6 +31,7 @@ class SiteProductsResponseDTO {
         this.model = product.model;
         this.description = product.description;
         this.values = product.values;
+        this.price = product.price;
         this.applications = product.applications;
         this.photo_link = product.photo_link;
     }

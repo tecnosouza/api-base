@@ -1,14 +1,12 @@
-import React, { useCallback, useEffect, useState } from "react";
 import { Column, DataTable } from "@/components/ui/data-table";
 import { PageHeader } from "@/components/ui/page-header";
-import { StatusBadge } from "@/components/ui/status-badge";
+import { useToast } from "@/hooks/use-toast";
 import { useAdvancedTable } from "@/hooks/useAdvancedTable";
 import { useApiQuery } from "@/hooks/useApiQuery";
-import { productsService, ProductRequest } from "@/services/productsService"; // Importa ProductRequest
 import { categoriesService } from "@/services/categoriesService";
+import { ProductRequest, productsService } from "@/services/productsService";
 import { Eye, Plus, Trash } from "lucide-react";
-import FormatDate from "../components/ui/format-date";
-import { useToast } from "@/hooks/use-toast";
+import React, { useCallback, useEffect, useState } from "react";
 
 interface Category {
   id: number;
@@ -20,18 +18,19 @@ interface Product {
   model: string;
   description: string;
   values: string;
+  price: number | string;
   applications: string;
   is_active: boolean;
   created_at?: string;
   category_id?: number;
   category?: {
-    id: number,
-    title: string,
-    title_menu: string,
-    description: string,
-    is_active: boolean,
+    id: number;
+    title: string;
+    title_menu: string;
+    description: string;
+    is_active: boolean;
   };
-  image?: File | string | null; // Adicionado o campo de imagem
+  image?: File | string | null;
   photo_link?: string;
 }
 
@@ -46,10 +45,11 @@ const Products = () => {
     model: "",
     description: "",
     values: "",
+    price: "",
     applications: "",
     is_active: true,
     category_id: undefined,
-    image: undefined, // Inicializa o campo de imagem
+    image: undefined,
   });
 
   const [initialData, setInitialData] = useState<Product | null>(null);
@@ -64,38 +64,21 @@ const Products = () => {
     updateSort,
     resetFilters,
     getApiParams,
-  } = useAdvancedTable({
-    initialLimit: 10,
-    limitOptions: [10, 25, 50],
-  });
+  } = useAdvancedTable({ initialLimit: 10, limitOptions: [10, 25, 50] });
 
   const memoizedGetApiParams = useCallback(getApiParams, [tableState, getApiParams]);
 
-  const {
-    data: products,
-    pagination: paginationData,
-    loading,
-    error,
-    refetch,
-    updateParams,
-  } = useApiQuery({
-    queryFn: productsService.getAll,
-    initialParams: memoizedGetApiParams,
-  });
+  const { data: products, pagination: paginationData, loading, error, refetch, updateParams } =
+    useApiQuery({ queryFn: productsService.getAll, initialParams: memoizedGetApiParams });
 
-  // Carregar categorias ao montar o componente
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await categoriesService.getAll({}); // Passa um objeto vazio para os parâmetros de paginação
+        const response = await categoriesService.getAll({});
         setCategories(response?.data ?? []);
       } catch (err) {
         console.error("Erro ao carregar categorias:", err);
-        toast({
-          title: "Erro",
-          description: "Falha ao carregar categorias.",
-          color: "error",
-        });
+        toast({ title: "Erro", description: "Falha ao carregar categorias.", color: "error" });
       }
     };
     fetchCategories();
@@ -111,6 +94,7 @@ const Products = () => {
       model: "",
       description: "",
       values: "",
+      price: "",
       applications: "",
       is_active: true,
       category_id: undefined,
@@ -126,15 +110,17 @@ const Products = () => {
       model: product.model,
       description: product.description,
       values: product.values,
+      price: product.price,
       applications: product.applications,
       is_active: product.is_active,
       category_id: product.category_id,
-      image: product.image, // Carrega a imagem existente
+      image: product.image,
     });
     setInitialData({
       model: product.model,
       description: product.description,
       values: product.values,
+      price: product.price,
       applications: product.applications,
       is_active: product.is_active,
       category_id: product.category_id,
@@ -151,35 +137,35 @@ const Products = () => {
   const confirmDelete = async () => {
     if (!productToDelete) return;
     try {
-      await productsService.delete(productToDelete.id!.toString()); // Convertido para string
+      await productsService.delete(productToDelete.id!.toString());
       toast({ title: "Sucesso", description: "Produto excluído com sucesso!" });
       setShowDeleteModal(false);
       setProductToDelete(null);
       refetch();
     } catch (error: any) {
       const messages = error?.response?.data?.errors?.map((e: any) => e.msg)?.join("\n");
-      toast({
-        title: "Erro",
-        description: messages ?? "Erro ao excluir produto.",
-        color: "error",
-      });
+      toast({ title: "Erro", description: messages ?? "Erro ao excluir produto.", color: "error" });
       console.error(error);
     }
   };
 
-  const hasChanges =
-    editingProduct && initialData && JSON.stringify(formData) !== JSON.stringify(initialData);
+  const hasChanges = editingProduct && initialData && JSON.stringify(formData) !== JSON.stringify(initialData);
 
   const allFieldsFilled =
     formData.model.trim() &&
     formData.description.trim() &&
     formData.values.trim() &&
+    formData.price &&
     formData.applications.trim() &&
     formData.category_id;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const parsedPrice = formData.price
+        ? Number(String(formData.price).replace(/[^\d,.-]/g, "").replace(",", "."))
+        : 0;
+
       if (editingProduct) {
         const updatedFields: Partial<ProductRequest> = {};
         Object.keys(formData).forEach((key) => {
@@ -189,6 +175,8 @@ const Products = () => {
           if (currentValue !== initialValue) {
             if (key === "image" && currentValue instanceof File) {
               updatedFields.image = currentValue;
+            } else if (key === "price") {
+              updatedFields.price = parsedPrice;
             } else if (key !== "image" && currentValue !== undefined && currentValue !== null) {
               (updatedFields as any)[key] = currentValue;
             }
@@ -202,6 +190,7 @@ const Products = () => {
           model: formData.model,
           description: formData.description,
           values: formData.values,
+          price: parsedPrice,
           applications: formData.applications,
           is_active: formData.is_active,
           category_id: formData.category_id!,
@@ -215,11 +204,7 @@ const Products = () => {
       refetch();
     } catch (error: any) {
       const messages = error?.response?.data?.errors?.map((e: any) => e.msg)?.join("\n");
-      toast({
-        title: "Erro",
-        description: messages ?? "Erro ao salvar produto.",
-        color: "error",
-      });
+      toast({ title: "Erro", description: messages ?? "Erro ao salvar produto.", color: "error" });
       console.error(error);
     }
   };
@@ -227,15 +212,24 @@ const Products = () => {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
-    const { name, type } = e.target;
-    let value: string | boolean | File | undefined;
+    const { name, type, value: rawValue } = e.target;
+    let value: string | boolean | File | number | undefined = rawValue;
 
     if (type === "checkbox") {
       value = (e.target as HTMLInputElement).checked;
     } else if (type === "file") {
       value = (e.target as HTMLInputElement).files?.[0];
-    } else {
-      value = e.target.value;
+    } else if (name === "price") {
+      // Remove tudo que não é número
+      const onlyNumbers = rawValue.replace(/\D/g, "");
+
+      if (onlyNumbers) {
+        // Divide por 100 para representar centavos e formata
+        const numericValue = parseFloat(onlyNumbers) / 100;
+        value = numericValue;
+      } else {
+        value = 0;
+      }
     }
 
     setFormData((prev) => ({
@@ -244,30 +238,45 @@ const Products = () => {
     }));
   };
 
-  const formatDate = (dateString: string) => FormatDate(dateString, "dd/mm/yyyy às hh:mm:ss");
-
   const columns: Column[] = [
     {
       key: "photo_link",
       label: "Imagem",
-      render: (_, row: Product) => (
+      render: (_, row: Product) =>
         row.photo_link ? (
-          <img src={row.photo_link} alt="Miniatura do Produto" className="h-10 w-10 object-cover rounded-md" />
+          <img
+            src={row.photo_link}
+            alt="Miniatura do Produto"
+            className="h-10 w-10 object-cover rounded-md"
+          />
         ) : (
           <span className="text-sm text-gray-500">Sem imagem</span>
-        )
-      ),
+        ),
     },
     {
       key: "category",
       label: "Categoria",
       sortable: true,
-      render: (_, row: Product) => (
-        <span>{row.category.title_menu}</span>
-      ),
+      render: (_, row: Product) => <span>{row.category?.title_menu}</span>,
     },
     { key: "model", label: "Modelo", filterable: true, sortable: true },
-    { key: "description", label: "Descrição", filterable: true, sortable: true },
+    { key: "description", label: "Descrição", filterable: true, sortable: false },
+    {
+      key: "price",
+      label: "Preço",
+      filterable: true,
+      sortable: false,
+      render: (_, row: Product) => {
+        const priceNumber = Number(String(row.price).replace(/[^\d.-]/g, ""));
+        const formatted = priceNumber
+          ? priceNumber.toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+          })
+          : "—";
+        return <span>{formatted}</span>;
+      },
+    },
     {
       key: "actions",
       label: "Ações",
@@ -292,6 +301,7 @@ const Products = () => {
 
   return (
     <div className="space-y-6">
+      {/* Page Header */}
       <PageHeader
         title="Produtos"
         actions={
@@ -315,6 +325,7 @@ const Products = () => {
         }
       />
 
+      {/* Data Table */}
       <DataTable
         columns={columns}
         data={products}
@@ -323,7 +334,7 @@ const Products = () => {
         pagination={
           paginationData && {
             currentPage: Number(paginationData.page),
-            totalPages: paginationData.last_page, // Corrigido para last_page
+            totalPages: paginationData.last_page,
             totalItems: paginationData.total,
             itemsPerPage: Number(paginationData.limit),
             limitOptions,
@@ -432,6 +443,25 @@ const Products = () => {
                   className="w-full rounded-lg border border-border bg-input text-foreground px-3 py-2
               focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-all"
                   required
+                />
+              </div>
+
+              {/* Preço */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground">Preço *</label>
+                <input
+                  type="text"
+                  name="price"
+                  value={
+                    formData.price
+                      ? formData.price.toLocaleString("pt-BR", {
+                        style: "currency",
+                        currency: "BRL",
+                      })
+                      : ""
+                  }
+                  onChange={handleChange}
+                  className="w-full rounded-lg border border-border bg-input text-foreground px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-all"
                 />
               </div>
 

@@ -14,7 +14,7 @@ exports.create = async (req) => {
     const tmpFilePath = file ? path.join(__dirname, '../../', file.path) : null; // caminho original do tmp
 
     try {
-        const { model, description, values, applications, category_id } = req.body;
+        const { model, description, values, applications, category_id, price } = req.body;
 
         let imageName = null;
         let imageSize = null;
@@ -49,6 +49,7 @@ exports.create = async (req) => {
             category_id,
             description,
             values,
+            price,
             applications,
             photo_name: imageName,
             photo_size: imageSize,
@@ -107,7 +108,7 @@ exports.getById = async (id) => {
     if (!product) {
         throw new AppError('Produto não encontrado.', { statusCode: 404, sourceModel: 'Product', saveDB: false });
     }
-    return product;
+    return new ProductsResponseDTO(product);
 };
 
 exports.update = async (id, req) => {
@@ -116,7 +117,7 @@ exports.update = async (id, req) => {
     const tmpFilePath = file ? path.join(__dirname, '../../', file.path) : null;
 
     try {
-        const { model, description, values, applications, category_id } = req.body;
+        const { model, description, values, applications, category_id, price } = req.body;
 
         // Busca produto existente
         let product = await Product.findByPk(id, { transaction });
@@ -192,6 +193,7 @@ exports.update = async (id, req) => {
                 model: model ?? product.model,
                 category_id: finalCategoryId,
                 description: description ?? product.description,
+                price: price ?? product.price,
                 values: values ?? product.values,
                 applications: applications ?? product.applications,
                 photo_name: imageName,

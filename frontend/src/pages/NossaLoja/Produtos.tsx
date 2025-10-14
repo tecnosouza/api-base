@@ -16,6 +16,7 @@ import { ArrowDown, ChevronDown } from "lucide-react";
 interface Produto {
   imagem: string;
   titulo: string;
+  price: number;
   descricao: string;
   valores: string;
   aplicacoes: string;
@@ -91,6 +92,7 @@ const Produtos = () => {
         const formattedProdutos: Produto[] = (data.data || []).map((item: any) => ({
           imagem: item.photo_link,
           titulo: item.model,
+          price: item.price,
           descricao: item.description,
           valores: item.values,
           aplicacoes: item.applications,
@@ -189,8 +191,13 @@ const Produtos = () => {
                         <div className="bg-white rounded-3xl p-4 shadow-lg flex justify-center items-center w-full h-[280px] sm:h-[320px] md:h-[360px] lg:h-[400px]">
                           <img src={product.imagem} alt={product.titulo} className="object-contain max-h-full max-w-full" />
                         </div>
-                        <h4 className="mt-4 text-green-600 text-lg sm:text-xl font-bold text-center uppercase px-2">
+                        <h4 className="mt-4 text-green-500 text-xl sm:text-2xl font-bold text-center uppercase tracking-wide px-2">
                           {product.titulo}
+                        </h4>
+                        <h4 className="mt-1 text-green-500 text-lg sm:text-xl font-semibold text-center uppercase px-2">
+                          {product.price
+                            ? `R$ ${Number(product.price).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
+                            : ''}
                         </h4>
                         <Popover onOpenChange={(open) => open && setSelectedProduct(product)}>
                           <PopoverTrigger asChild>
